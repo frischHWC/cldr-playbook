@@ -1,0 +1,126 @@
+---
+### Prepare files for installation ###
+- name: Create temporary file
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: temp_pvc_oc_file
+
+- name: DEBUG - temp_pvc_oc_file
+  debug:
+    msg: "{{ temp_pvc_oc_file }}"
+  when: debug | default(false)
+
+- name: Create list of dc for ldap
+  set_fact: 
+    realm_splitted: "{{ realm_user.split('.') }}"
+
+- name: DEBUG realm_splitted
+  debug:
+    msg: "{{ realm_splitted }}"
+  when: debug | default(false)
+
+- name: Inspect pvc_oc values and push it on one line
+  set_fact:
+    pvc_oc_values_yaml: "{{ lookup('template', 'pvc_oc_values_raw.yml') | replace('\n', '\\n') | replace('\"', '\\\"' ) }}"
+
+- name: Inspect kube config values and push it on one line
+  set_fact:
+    kube_config: "{{ lookup('template', kube_config_path) | replace('\n', '\\n') | replace('\"', '\\\"' ) }}"
+
+- name: Template install_cp to a single temporary file
+  template:
+    src: "install_cp.json"
+    dest: "{{ temp_pvc_oc_file.path }}"
+
+- name: Read pvc_oc file values
+  set_fact:
+    temp_pvc_oc_file_content: "{{ lookup('file', temp_pvc_oc_file.path ) }}"
+
+- name: DEBUG - temp_pvc_oc_file_content 
+  debug:
+    msg: "{{ temp_pvc_oc_file_content }}"
+  when: debug | default(false)
+
+
+### Prepare files for destroy ###
+- name: Create temporary destroy file
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: temp_pvc_oc_destroy_file
+
+- name: DEBUG - temp_pvc_oc_destroy_file
+  debug:
+    msg: "{{ temp_pvc_oc_destroy_file }}"
+  when: debug | default(false)
+
+- name: Inspect pvc_oc values and push it on one line
+  set_fact:
+    pvc_oc_destroy_values_yaml: "{{ lookup('template', 'pvc_oc_destroy_values_raw.yml') | replace('\n', '\\n') | replace('\"', '\\\"' ) }}"
+
+- name: Template uninstall_cp to a single temporary file
+  template:
+    src: "uninstall_cp.json"
+    dest: "{{ temp_pvc_oc_destroy_file.path }}"
+
+- name: Read pvc_oc file values
+  set_fact:
+    temp_pvc_oc_destroy_content: "{{ lookup('file', temp_pvc_oc_destroy_file.path ) }}"
+
+- name: DEBUG - temp_pvc_oc_destroy_content 
+  debug:
+    msg: "{{ temp_pvc_oc_destroy_content }}"
+  when: debug | default(false)
+    
+- name: Remove temporary destroy_cp file
+  ansible.builtin.file:
+    path: "{{ temp_pvc_oc_destroy_file.path }}"
+    state: absent
+  when: temp_pvc_oc_destroy_file.path is defined
+
+
+### Destroy PvC if it already exists ###
+- name: Check existing control planes
+  cm_api:
+    endpoint: "/controlPlanes/"
+    method: GET
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  register: control_planes_list
+
+- set_fact:
+    cp_uuid: "{{ control_planes_list.json | community.general.json_query(query) }}"
+  vars:
+    query: "items[?namespace == '{{ cluster_name_pvc }}'].uuid | [0]"  
+
+- name: DEBUG - cp_uuid 
+  debug:
+    msg: "{{ cp_uuid }}"
+  when: debug | default(false)
+
+- name: Uninstall Control Plane as it already exist
+  cm_api:
+    endpoint: "/controlPlanes/{{ cp_uuid }}/commands/uninstallControlPlane"
+    method: POST
+    body: "{{ temp_pvc_oc_destroy_content }}"
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  when: cp_uuid | length > 0
+
+
+### Install PvC ###
+
+- name: Install Control Plane
+  cm_api:
+    endpoint: /controlPlanes/commands/installControlPlane
+    method: POST
+    body: "{{ temp_pvc_oc_file_content }}"
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+
+- name: Remove temporary start_cp file
+  ansible.builtin.file:
+    path: "{{ temp_pvc_oc_file.path }}"
+    state: absent
+  when: temp_pvc_oc_file.path is defined
+
+
+  

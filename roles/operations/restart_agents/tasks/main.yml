@@ -1,0 +1,9 @@
+---
+- name: Restart Cloudera Agents
+  service:
+    name: cloudera-scm-agent
+    state: restarted
+
+- name: Pause for 30 seconds for agents 
+  pause:
+    seconds: 30

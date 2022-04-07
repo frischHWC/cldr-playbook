@@ -1,0 +1,11 @@
+---
+# Custom playbook in order to fix CDH5 settings
+
+- name: Fix cdh5 paywall
+  hosts: cloudera_manager
+  gather_facts: no
+  roles:
+    - fix/cdh_5_paywall
+  tags:
+    - fix
+    - paywall

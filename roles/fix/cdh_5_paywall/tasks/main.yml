@@ -1,0 +1,12 @@
+---
+- name: Change Parcels available for CDH 5 with username/password
+  cm_api:
+    endpoint: "cm/config"
+    body: "{{ lookup('template', 'cdh5_repo.json') }}"
+    method: PUT
+  register: response_parcel_update
+
+- name: debug response_parcel_update
+  debug:
+    var: response_parcel_update
+  when: debug | default(false)

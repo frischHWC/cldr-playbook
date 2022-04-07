@@ -1,0 +1,2 @@
+other:
+  forceCleanup: "{{ force_cleanup | default(false) }}"

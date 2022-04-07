@@ -1,0 +1,9 @@
+{
+  "hostNames" : [ {% for host in groups['pvc_hosts'] %}"{{ host }}"{% if not loop.last %},{% endif %}{% endfor %} ],
+  "sshPort" : 22,
+  "userName" : "root",
+  "password": "cloudera",
+  "javaInstallStrategy" : "NONE",
+  "unlimitedJCE" : false,
+  "cmRepoUrl": "{{ cloudera_manager_repo_url }}"
+}

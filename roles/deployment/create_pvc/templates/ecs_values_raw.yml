@@ -1,0 +1,203 @@
+Services:
+  ## When .Database.Mode is set to existing, you can enter a set of common host, port, username, password
+  ## They will be used if they are not individually set in the services below.
+  #
+  # common:
+  #   Config:
+  #     database:
+  #       host:
+  #       port:
+  #       username:
+  #       password:
+
+  thunderheadenvironment:
+    Config:
+      database:
+        name: db-env
+        ## The following overrides are optional.
+        ## When .Database.Mode is set to existing, the values will be taken from .Services.common.Config.database if left unspecified.
+        ## When .Database.Mode is set to embedded, the following values are ignored.
+
+        # host:
+        # port:
+        # username:
+        # password:
+  clusterproxy:
+    Config:
+      database:
+        name: cluster-proxy
+        # host:
+        # port:
+        # username:
+        # password:
+  classicclusters:
+    Config:
+      database:
+        name: cm-registration
+        # host:
+        # port:
+        # username:
+        # password:
+  mlxcontrolplaneapp:
+    Config:
+      database:
+        name: db-mlx
+        # host:
+        # port:
+        # username:
+        # password:
+  cpxliftie:
+    Config:
+      database:
+        name: db-liftie
+        # host:
+        # port:
+        # username:
+        # password:
+  monitoringapp:
+    Config:
+      database:
+        name: db-alerts
+        # host:
+        # port:
+        # username:
+        # password:
+      # prometheus:
+      #   ingressForCM:
+      #     enabled: true
+      #     # The control plane prometheus ingress hostname will be <subdomain>.apps.<ApplicationDomain>
+      #     subdomain: "prometheus-cp"
+      #     # This is a username and password hash in htpasswd format encoded in base64
+      #     htpasswdCredentials: "{{ pvc_htpasswdCredentials }}"
+  dwx:
+    Config:
+      database:
+        name: db-dwx
+        # host:
+        # port:
+        # username:
+        # password:
+  dex:
+    Config:
+      database:
+        name: db-dex
+        # host:
+        # port:
+        # username:
+        # password:
+  resourcepoolmanager:
+    Config:
+      database:
+        name: db-resourcepoolmanager
+        # host:
+        # port:
+        # username:
+        # password:
+  clusteraccessmanager:
+    Config:
+      database:
+        name: db-clusteraccessmanager
+        # host:
+        # port:
+        # username:
+        # password:
+
+  thunderheadusermanagementprivate:
+    Config:
+      database:
+        name: db-ums
+        # host:
+        # port:
+        # username:
+        # password:
+      # replicaCount: 2
+
+  # thunderheadiamconsole:
+  #   Config:
+  #     replicaCount: 2
+
+  # thunderheadiamapi:
+  #   Config:
+  #     replicaCount: 2
+
+ContainerInfo:
+  ## The mode can be public or custom
+  Mode: embedded
+  # CopyDocker: true
+  ## Docker read credentials are typically required.
+  # Username:
+  # Password:
+  ## If the mode is custom, then enter the docker registry + repository here:
+  ## e.g. registry.example.com/repository_name
+  # Registry:
+
+Database:
+  ## The mode can be either embedded or existing
+  ## If existing is set, then database host, port, username, password must be
+  ## set for each database in the services section above.
+  Mode: embedded
+  ## The amount of storage in GB given to the embedded database.
+  EmbeddedDbStorage: 20
+
+Vault:
+  ## The mode can be either embedded or external.
+  Mode: embedded
+  ## The amount of storage in GB given to the embedded vault.
+  EmbeddedStorage: 2
+  ## If external is set, then you also need to set the following:
+  # Address: <The Vault URL>
+  # Token: <The authorization token that has the ability to write permissions inside the vault>
+  # CaCert: <The CA Certificate in base64 encoded format>
+  # SecretPath: kv
+  # K8AuthPathPrefix: cloudera
+  # InClusterAddress: <Vault URL to use from within the cluster>
+  # VaultK8sAddress: <K8S address Vault should use with the cluster>
+  # SkipVaultTLS: <true/false>
+
+OptionalCerts:
+  MiscCaCerts: ""
+
+## If you want to use LDAP, uncomment the following
+{% if free_ipa %}
+ExternalAuth:
+  Type: LDAP
+  Config:
+    ldap_url: "ldap://{{ groups.krb5_server | first | default(omit) }}:389"
+    ldap_bind_dn: "uid=admin,cn=users,cn=accounts,{% for i in realm_splitted %}dc={{ i | lower }}{% if not loop.last %},{% endif %}{% endfor %}"
+    ldap_bind_pw: "{{ default_password }}"
+    ldap_user_search_base: "cn=accounts,{% for i in realm_splitted %}dc={{ i | lower }}{% if not loop.last %},{% endif %}{% endfor %}"
+    ldap_user_search_filter: "(&(uid={0})(objectClass=person))"
+    ldap_group_search_base: "cn=accounts,{% for i in realm_splitted %}dc={{ i | lower }}{% if not loop.last %},{% endif %}{% endfor %}"
+    ldap_group_search_filter: "(&(member={1})(objectClass=posixgroup))" 
+{% endif %}
+#
+## You should fill in the following information. Otherwise, you might not be able to
+## communicate with the Cloudera Manager instance or send diagnostics to Cloudera.
+# Other:
+#   cmLicense:
+#     uuid: <CM License uuid>
+#     owner: <CM License Owner>
+#   truststoreJKS: <The truststore certificate in base64 encoded JKS format to communicate with the primary Cloudera Manager instance>
+#   truststorePEM: <The truststore certificate in base64 encoded PEM format to communicate with the primary Cloudera Manager instance>
+#   truststoreChecksum: <The truststore certificate checksum to communicate with the primary Cloudera Manager instance>
+## If you want to use a Storage Class other than the default, uncomment the following
+# Storage:
+#   StorageClass: <Storage Class Name>
+
+## Valid values for Name: openshift/standard
+## standard (non-openshift, rancher, etc.)
+## Note: values in lowercase
+# Platform:
+#   Name: standard
+# ## Only filled for Standard platform
+#   WebConsoleUrl: ""
+
+# ## For Rancher, set the appropriate application domain name. e.g. rancher-1.vpc.cloudera.com
+# ApplicationDomain: "{{ pvc_app_domain_name }}"
+
+
+## Openshift injects a valid fsGroup value for securityContext for its deployments. Since Rke2 doesn't have
+## this feature built-in, it causes a permission issue due to which postgresql fails to create the data directory
+## for persisting data (OPSX-1633). This flag needs to be set to false for Openshift, true otherwise.
+SecurityContext:
+  Enabled: true

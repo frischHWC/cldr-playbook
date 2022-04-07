@@ -1,0 +1,9 @@
+{
+    "items":
+    [
+        {
+            "name":"remote_parcel_repo_urls",
+            "value":"https://archive.cloudera.com/p/cdh5/parcels/5.16/,https://archive.cloudera.com/spark2/parcels/2.4.0.cloudera2/,https://archive.cloudera.com/cdh5/parcels/{latest_supported}/,https://{{ cloudera_manager_repo_username }}:{{ cloudera_manager_repo_password }}@archive.cloudera.com/p/cdh5/parcels/5.16.2/,https://{{ cloudera_manager_repo_username }}:{{ cloudera_manager_repo_password }}@archive.cloudera.com/p/cdh5/parcels/5.16/,https://{{ cloudera_manager_repo_username }}:{{ cloudera_manager_repo_password }}@archive.cloudera.com/p/cdh5/redhat/7/x86_64/cdh/5.16.2/"
+        }
+    ]
+}

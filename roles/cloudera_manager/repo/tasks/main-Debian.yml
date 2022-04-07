@@ -1,0 +1,35 @@
+# Copyright 2021 Cloudera, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+---
+
+- name: Add credentials to repository URLs if required
+  set_fact:
+    cloudera_manager_repo_url_with_creds: "{{ cloudera_manager_repo_url | regex_replace('^(?P<proto>http[s]?://)','\\g<proto>' + cloudera_manager_repo_username|string + ':' + cloudera_manager_repo_password|string + '@')}}"
+    cloudera_manager_repo_key_with_creds: "{{ cloudera_manager_repo_key | regex_replace('^(?P<proto>http[s]?://)','\\g<proto>' + cloudera_manager_repo_username|string + ':' + cloudera_manager_repo_password|string + '@')}}"
+  no_log: cloudera_manager_repo_username is defined
+  when: cloudera_manager_repo_username is defined
+
+- name: Add Cloudera Manager apt repository key
+  apt_key:
+    url: "{{ cloudera_manager_repo_key_with_creds | default(cloudera_manager_repo_key) }}"
+    state: present
+  no_log: cloudera_manager_repo_username is defined
+
+- name: Add Cloudera Manager apt repository
+  apt_repository:
+    repo: "deb [arch=amd64] {{ cloudera_manager_repo_url_with_creds | default(cloudera_manager_repo_url) }} {{ cloudera_manager_repo_apt_codename }} {{ cloudera_manager_repo_apt_component }}"
+    filename: cloudera-manager
+  no_log: cloudera_manager_repo_username is defined
+

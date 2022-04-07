@@ -1,0 +1,31 @@
+---
+- name: DEBUG Auto-TLS using password
+  debug:
+    msg: "{{ lookup('template', 'auto-tls.json') }}"
+  when: node_password not empty and debug | default(false)
+
+- name: Enable Auto-TLS
+  cm_api:
+    endpoint: "/cm/commands/generateCmca"
+    method: POST
+    body: "{{ lookup('template', 'auto-tls.json') }}"
+  ignore_errors: true
+  when: node_password not empty 
+
+- name: Push node_key on one line
+  set_fact:
+    node_key_one_line: "{{ node_key | replace('\n', '\\n') }}"
+  when: node_key not empty 
+
+- name: DEBUG Auto-TLS using key
+  debug:
+    msg: "{{ lookup('template', 'auto-tls-key.json') }}"
+  when: node_key not empty and debug | default(false)
+
+- name: Enable Auto-TLS
+  cm_api:
+    endpoint: "/cm/commands/generateCmca"
+    method: POST
+    body: "{{ lookup('template', 'auto-tls-key.json') }}"
+  ignore_errors: true
+  when: node_key not empty 

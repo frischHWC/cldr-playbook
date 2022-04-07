@@ -1,0 +1,107 @@
+---
+- name: Get All services from CM
+  cm_api:
+    endpoint: "/clusters/{{ kafka_cluster_name }}/services/"
+    method: GET
+    body_format: json
+  register: stream_services
+
+- name: DEBUG - stream_services
+  debug:
+    msg: "{{ stream_services }}"
+  when: debug | default(false)
+
+- set_fact:
+    kafka_service_name: "{{ stream_services.json | community.general.json_query(query) }}"
+  vars:
+    query: "items[?type == 'KAFKA'].name | [0]"
+
+- set_fact:
+    smm_service_name: "{{ stream_services.json | community.general.json_query(query) }}"
+  vars:
+    query: "items[?type == 'STREAMS_MESSAGING_MANAGER'].name | [0]"
+
+- name: Get Kafka roles repartition
+  uri:
+    url: "{{ cloudera_manager_api_url }}/clusters/{{ kafka_cluster_name }}/services/{{ kafka_service_name }}/roles"
+    user: "{{ cloudera_manager_user }}"
+    password: "{{ cloudera_manager_password }}"
+    method: GET
+    force_basic_auth: yes
+    status_code: 200
+    return_content: yes
+    validate_certs: no
+    body_format: json
+  register: kafka_roles
+
+- name: DEBUG - kafka_roles
+  debug:
+    msg: "{{ kafka_roles }}"
+  when: debug | default(false)
+
+- name: Get Kafka Broker full config
+  uri:
+    url: "{{ cloudera_manager_api_url }}/clusters/{{ kafka_cluster_name }}/services/{{ kafka_service_name }}/roleConfigGroups/{{ kafka_service_name }}-KAFKA_BROKER-BASE/config?view=full"
+    user: "{{ cloudera_manager_user }}"
+    password: "{{ cloudera_manager_password }}"
+    method: GET
+    force_basic_auth: yes
+    status_code: 200
+    return_content: yes
+    validate_certs: no
+    body_format: json
+  register: kafka_broker_full_config
+
+- name: DEBUG - kafka_broker_full_config
+  debug:
+    msg: "{{ kafka_broker_full_config }}"
+  when: debug | default(false)
+
+- set_fact:
+    kafka_hosts: "{{ kafka_roles.json | community.general.json_query(query) }}"
+  vars:
+    query: "items[?type == 'KAFKA_BROKER'].hostRef.hostname"
+
+- name: DEBUG - kafka_hosts
+  debug:
+    msg: "{{ kafka_hosts }}"
+  when: debug | default(false)
+
+- set_fact:
+    kafka_port: "{{ kafka_broker_full_config.json | community.general.json_query(query) }}"
+  vars:
+    query: "items[?name == 'ssl_port'].value | [0]"
+
+- set_fact:
+    kafka_port: "{{ kafka_broker_full_config.json | community.general.json_query(query) }}"
+  vars:
+    query: "items[?name == 'ssl_port'].default | [0]"
+  when: kafka_port == ''
+
+- set_fact:
+    kafka_url: "{% for host in kafka_hosts %}{{ host }}:{{ kafka_port }}{% if not loop.last %},{% endif %}{% endfor %}"
+
+- name: Change Kafka Connect bootstrap.servers after TLS enabled
+  cm_api:
+    endpoint: "/clusters/{{ kafka_cluster_name }}/services/{{ kafka_service_name }}/roleConfigGroups/{{ kafka_service_name }}-KAFKA_CONNECT-BASE/config"
+    body: "{{ lookup('template', 'kafka-connect.json') }}"
+    method: PUT
+  register: response_kc
+
+- name: debug kafka-connect
+  debug:
+    var: response_kc
+  when: debug | default(false)
+
+- name: Change SMM protocols after TLS enabled
+  cm_api:
+    endpoint: "/clusters/{{ kafka_cluster_name }}/services/{{ smm_service_name }}/roleConfigGroups/{{ smm_service_name }}-STREAMS_MESSAGING_MANAGER_SERVER-BASE/config"
+    body: "{{ lookup('template', 'smm.json') }}"
+    method: PUT
+  register: response_smm
+  when: smm_service_name != ''
+
+- name: debug smm
+  debug:
+    var: response_smm
+  when: debug | default(false) and smm_service_name != ''

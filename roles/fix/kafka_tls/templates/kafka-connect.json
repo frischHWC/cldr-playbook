@@ -1,0 +1,9 @@
+{
+  "items":
+  [
+    {
+      "name":"bootstrap.servers",
+      "value":"{{ kafka_url }}"
+    }
+  ]
+}

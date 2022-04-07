@@ -1,0 +1,8 @@
+{
+  "kubernetesType" : "openshift",
+  "remoteRepoUrl" : "{{ pvc_repo_url }}",
+  "kubeConfig" : "{{ kube_config }}",
+  "namespace" : "{{ cluster_name_pvc }}",
+  "isOverrideAllowed" : false,
+  "valuesYaml" : "{{ pvc_oc_values_yaml }}"
+}

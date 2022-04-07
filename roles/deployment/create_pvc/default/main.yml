@@ -1,0 +1,4 @@
+---
+cloudera_manager_repo_url: https://archive.cloudera.com/p/cm7/tech-preview/7.5.0-15487566/redhat7/yum
+pvc_repo_url: https://archive.cloudera.com/p/cdp-pvc/tech-preview/1.3.0-b1533/.
+pvc_version: 1.3.0

@@ -1,0 +1,281 @@
+---
+
+### Add ECS hosts to the cluster ###
+- name: DEBUG - add_hosts
+  debug:
+    msg: "{{ lookup('template', 'add_hosts.json') }}"
+  when: debug | default(false)
+
+- name: Add hosts to the cluster
+  cm_api:
+    endpoint: /cm/commands/hostInstall
+    method: POST
+    body: "{{ lookup('template', 'add_hosts.json') }}"
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+
+
+- name: Get hosts details
+  cm_api:
+    endpoint: /hosts
+    method: GET
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  register: host_details
+
+- name: DEBUG - Get hosts
+  debug:
+    msg: "{{ host_details }}"
+  when: debug | default(false)
+
+
+- name: Create host mappings
+  set_fact: 
+    hosts_mapping: "{{ hosts_mapping | default([]) + host_details.json | community.general.json_query(query) }}"
+  vars:
+    query: "items[?hostname == '{{ item }}' ].{hostId: hostId, hostname: hostname}"
+  with_items: "{{ groups['pvc_hosts'] }}"
+
+- name: DEBUG - hosts_mapping
+  debug:
+    msg: "{{ hosts_mapping }}"
+  when: debug | default(false)
+
+### Create Empty Experience cluster ###
+- name: DEBUG - hosts_exp
+  debug:
+    msg: "{{ lookup('template', 'create_exp.json') }}"
+  when: debug | default(false)
+
+- name: Create Experience cluster
+  cm_api:
+    endpoint: /clusters 
+    method: POST
+    body: "{{ lookup('template', 'create_exp.json') }}"
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+
+### Add ECS parcel to cluster ###
+- name: Get all config
+  cm_api:
+    endpoint: /cm/config
+    method: GET
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  register: config_from_cm
+
+- name: get all parcels url
+  set_fact:
+    remote_parcel_url: "{{ config_from_cm.json | community.general.json_query(query) }},{{ pvc_repo_url }}/parcels/"
+  vars:
+    query: "items[?name == 'REMOTE_PARCEL_REPO_URLS'].value | [0]"
+
+- name: DEBUG - parcel url
+  debug:
+    msg: "{{ remote_parcel_url }}"
+  when: debug | default(false)
+
+- name: Add parcel url to the cluster
+  cm_api:
+    endpoint: /cm/config
+    method: PUT
+    body: "{{ lookup('template', 'remote_parcels.json') }}"
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+
+- name: Pause to acknowledge parcels
+  pause:
+    seconds: 15
+
+
+- name: Get ECS production name
+  cm_api:
+    endpoint: "/clusters/{{ cluster_name_pvc }}/parcels/"
+    method: GET
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  register: parcels_answer
+  
+- name: DEBUG - parcels_answer url
+  debug:
+    msg: "{{ parcels_answer }}"
+  when: debug | default(false)
+
+- name: set ECS product name
+  set_fact:
+    pvc_product_name: "{{ parcels_answer.json | community.general.json_query(query) }}"
+  vars:
+    query: "items[?product == 'ECS'].version | [0]"
+  
+- name: DEBUG - pvc_product_name 
+  debug:
+    msg: "{{ pvc_product_name }}"
+  when: debug | default(false)
+
+### Download and activate ECS ###
+- name: Start Download
+  cm_api:
+    endpoint: "/clusters/{{ cluster_name_pvc }}/parcels/products/ECS/versions/{{ pvc_product_name }}/commands/startDownload"
+    method: POST
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  register: download_answer
+
+- name: Check ECS is downloaded
+  cm_api:
+    endpoint: "/clusters/{{ cluster_name_pvc }}/parcels/products/ECS/versions/{{ pvc_product_name }}"
+    method: GET
+  register: pvc_download
+  until: pvc_download.json.stage == "DOWNLOADED" or pvc_download.json.stage == "DISTRIBUTED" or pvc_download.json.stage == "ACTIVATED"
+  retries: 100
+  delay: 30
+
+- name: Start distribution
+  cm_api:
+    endpoint: /clusters/{{ cluster_name_pvc }}/parcels/products/ECS/versions/{{ pvc_product_name }}/commands/startDistribution
+    method: POST
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+
+- name: Check ECS is distributed
+  cm_api:
+    endpoint: "/clusters/{{ cluster_name_pvc }}/parcels/products/ECS/versions/{{ pvc_product_name }}"
+    method: GET
+  register: pvc_download
+  until: pvc_download.json.stage == "DISTRIBUTED" or pvc_download.json.stage == "ACTIVATED"
+  retries: 100
+  delay: 30
+
+- name: Activate ECS parcel
+  cm_api:
+    endpoint: /clusters/{{ cluster_name_pvc }}/parcels/products/ECS/versions/{{ pvc_product_name }}/commands/activate
+    method: POST
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+
+- name: Check ECS is activated
+  cm_api:
+    endpoint: "/clusters/{{ cluster_name_pvc }}/parcels/products/ECS/versions/{{ pvc_product_name }}"
+    method: GET
+  register: pvc_download
+  until: pvc_download.json.stage == "ACTIVATED"
+  retries: 100
+  delay: 30
+
+
+### Prepare files for install ###
+- name: Create temporary file
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: temp_ecs_file
+
+- name: DEBUG - temp_ecs_file
+  debug:
+    msg: "{{ temp_ecs_file }}"
+  when: debug | default(false)
+
+- name: Inspect ECS values and push it on one line
+  set_fact:
+    ecs_values_yaml: "{{ lookup('template', 'ecs_values_raw.yml') | replace('\n', '\\n') | replace('\"', '\\\"' ) }}"
+
+- name: Template start_cp to a single temporary file
+  template:
+    src: "start_cp.json"
+    dest: "{{ temp_ecs_file.path }}"
+
+- name: Read ecs file values
+  set_fact:
+    temp_ecs_file_content: "{{ lookup('file', temp_ecs_file.path ) }}"
+
+- name: DEBUG - temp_ecs_file_content 
+  debug:
+    msg: "{{ temp_ecs_file_content }}"
+  when: debug | default(false)
+
+
+
+### Prepare files for destroy ###
+- name: Create temporary destroy file
+  ansible.builtin.tempfile:
+    state: file
+    suffix: temp
+  register: temp_pvc_oc_destroy_file
+
+- name: DEBUG - temp_pvc_oc_destroy_file
+  debug:
+    msg: "{{ temp_pvc_oc_destroy_file }}"
+  when: debug | default(false)
+
+- name: Inspect pvc_oc values and push it on one line
+  set_fact:
+    pvc_oc_destroy_values_yaml: "{{ lookup('template', 'pvc_oc_destroy_values_raw.yml') | replace('\n', '\\n') | replace('\"', '\\\"' ) }}"
+
+- name: Template uninstall_cp to a single temporary file
+  template:
+    src: "uninstall_cp.json"
+    dest: "{{ temp_pvc_oc_destroy_file.path }}"
+
+- name: Read pvc_oc file values
+  set_fact:
+    temp_pvc_oc_destroy_content: "{{ lookup('file', temp_pvc_oc_destroy_file.path ) }}"
+
+- name: DEBUG - temp_pvc_oc_destroy_content 
+  debug:
+    msg: "{{ temp_pvc_oc_destroy_content }}"
+  when: debug | default(false)
+    
+- name: Remove temporary destroy_cp file
+  ansible.builtin.file:
+    path: "{{ temp_pvc_oc_destroy_file.path }}"
+    state: absent
+  when: temp_pvc_oc_destroy_file.path is defined
+
+### Destroy PvC if it already exists ###
+- name: Check existing control planes
+  cm_api:
+    endpoint: "/controlPlanes/"
+    method: GET
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  register: control_planes_list
+
+- set_fact:
+    cp_uuid: "{{ control_planes_list.json | community.general.json_query(query) }}"
+  vars:
+    query: "items[?namespace == '{{ cluster_name_pvc }}'].uuid | [0]"  
+
+- name: DEBUG - cp_uuid 
+  debug:
+    msg: "{{ cp_uuid }}"
+  when: debug | default(false)
+
+- name: Uninstall Control Plane as it already exist
+  cm_api:
+    endpoint: "/controlPlanes/{{ cp_uuid }}/commands/uninstallControlPlane"
+    method: POST
+    body: "{{ temp_pvc_oc_destroy_content }}"
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  when: cp_uuid | length > 0
+  
+
+### Start PvC ###
+  
+- name: Start PvC cluster
+  cm_api:
+    endpoint: /controlPlanes/commands/installEmbeddedControlPlane
+    method: POST
+    body: "{{ temp_ecs_file_content }}"
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  register: start_pvc_result
+
+- name: Remove temporary start_cp file
+  ansible.builtin.file:
+    path: "{{ temp_ecs_file.path }}"
+    state: absent
+  when: temp_ecs_file.path is defined
+
+
+- name: Retry start command
+  cm_api:
+    endpoint: "/commands/{{ start_pvc_result.json.id }}/retry"
+    method: POST
+    timeout: "{{ cluster_restart_timeout | default(900) }}"
+  register: response_retry
+  ignore_errors: yes
+  when: start_pvc_result.failed and 'id' in start_pvc_result.json
+
+- name: DEBUG - response_retry
+  debug:
+    msg: "{{ response_retry }}"
+  when: response_retry is defined

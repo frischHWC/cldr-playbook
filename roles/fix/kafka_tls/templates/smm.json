@@ -1,0 +1,13 @@
+{
+  "items":
+  [
+    {
+      "name":"kafka.connect.protocol",
+      "value":"https"
+    },
+    {
+      "name": "kafka.connect.port",
+      "value": "28085"
+    }
+  ]
+}

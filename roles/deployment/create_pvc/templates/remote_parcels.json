@@ -1,0 +1,8 @@
+{
+    "items": [
+      {
+        "name": "remote_parcel_repo_urls",
+        "value": "{{ remote_parcel_url }}"
+      }
+    ]
+  }

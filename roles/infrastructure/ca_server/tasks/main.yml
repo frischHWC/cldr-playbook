@@ -1,0 +1,87 @@
+# Copyright 2021 Cloudera, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+---
+
+- name: Include OS-specific variables
+  include_vars:
+    file: "{{ ansible_os_family }}.yml"
+
+- name: Install openssl
+  package:
+    name: openssl
+    state: present
+
+- name: Install PyOpenSSL
+  package:
+    name: pyOpenSSL
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install cryptography Python package
+  pip:
+    name: cryptography
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Check for the intermediate CA key
+  stat:
+    path: "{{ ca_server_intermediate_path_private }}/intermediate.key.pem"
+  register: intermediate_ca_key_stat
+
+- name: Check for the intermediate CA certificate
+  stat:
+    path: "{{ ca_server_intermediate_path_certs }}/{{ ca_server_intermediate_cert_name }}"
+  register: intermediate_ca_cert_stat
+
+- name: Check for the intermediate CA config
+  stat:
+    path: "{{ ca_server_intermediate_path }}/openssl.cnf"
+  register: intermediate_ca_conf_stat
+
+- set_fact:
+    intermediate_ca_key_exists: "{{ intermediate_ca_key_stat.stat.exists }}"
+    intermediate_ca_cert_exists: "{{ intermediate_ca_cert_stat.stat.exists }}"
+    intermediate_ca_conf_exists: "{{ intermediate_ca_conf_stat.stat.exists }}"
+
+- assert:
+    that:
+      - intermediate_ca_key_exists
+      - intermediate_ca_cert_exists
+      - intermediate_ca_conf_exists
+    success_msg: "All required intermediate CA files exist (key, certificate, config)"
+    fail_msg: >-
+      Not all required intermediate CA files exist (key, certificate, config).
+      The intermediate CA config should exist at {{ ca_server_intermediate_path }}/openssl.cnf.
+      Please clean-up the key and certificate in {{ ca_server_intermediate_path }}.
+  when: intermediate_ca_key_exists or intermediate_ca_cert_exists
+
+- name: Ensure the intermediate CA config has the correct section ([ cloudera_req ])
+  lineinfile:
+    path: "{{ ca_server_intermediate_path }}/openssl.cnf"
+    regexp: '\[\s*cloudera_req\s*\]'
+    state: absent
+  check_mode: yes
+  changed_when: false
+  register: intermediate_conf_check
+  when: intermediate_ca_conf_exists
+
+- assert:
+    that: "{{ intermediate_conf_check.found }}"
+    success_msg: "The intermediate CA config has a cloudera_req section"
+    fail_msg: "The intermediate CA config must have a cloudera_req section for certificate signing"
+  when: intermediate_ca_conf_exists
+
+- include_tasks: create_ca.yml
+  when: not intermediate_ca_key_exists and not intermediate_ca_cert_exists
