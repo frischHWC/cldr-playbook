@@ -1,8 +1,12 @@
 ---
+- name: Check if password or key is used to connect to machines
+  set_fact:
+    use_password: "{{ true if node_password is defined and node_password|length > 0 else false }}"
+
 - name: DEBUG Auto-TLS using password
   debug:
     msg: "{{ lookup('template', 'auto-tls.json') }}"
-  when: node_password | length > 0 and debug | default(false)
+  when: use_password and debug | default(false)
 
 - name: Enable Auto-TLS
   cm_api:
@@ -10,17 +14,17 @@
     method: POST
     body: "{{ lookup('template', 'auto-tls.json') }}"
   ignore_errors: true
-  when: node_password | length > 0
+  when: use_password
 
 - name: Set node_key on one line
   set_fact:
-    node_key_one_line: "{{ lookup('file', '~/node_key' ) | replace('\n', '\\n') | replace('\"', '\\\"' ) }}"
-  when: node_key | length > 0 
+    node_key_one_line: "{{ lookup('file', '/tmp/node_key' ) | replace('\n', '\\n') | replace('\"', '\\\"' ) }}"
+  when: not use_password
 
 - name: DEBUG Auto-TLS using key
   debug:
     msg: "{{ lookup('template', 'auto-tls-key.json') }}"
-  when: node_key | length > 0 and debug | default(false)
+  when: not use_password
 
 - name: Enable Auto-TLS
   cm_api:
@@ -28,4 +32,4 @@
     method: POST
     body: "{{ lookup('template', 'auto-tls-key.json') }}"
   ignore_errors: true
-  when: node_key | length > 0
+  when: not use_password
