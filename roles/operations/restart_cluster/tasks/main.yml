@@ -2,12 +2,12 @@
 
 - name: Restart cluster
   cm_api:
-    endpoint: /clusters/{{ cluster_name }}/commands/restart
+    endpoint: /clusters/{{ cluster_to_restart }}/commands/restart
     method: POST
     timeout: "{{ cluster_restart_timeout | default(3000) }}"
 
 - name: Re-deploy client configurations
   cm_api:
-    endpoint: /clusters/{{ cluster_name }}/commands/deployClientConfig
+    endpoint: /clusters/{{ cluster_to_restart }}/commands/deployClientConfig
     method: POST
     timeout: "{{ cluster_restart_timeout | default(3000) }}"

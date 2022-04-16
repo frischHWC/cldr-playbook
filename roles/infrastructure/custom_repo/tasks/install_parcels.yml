@@ -39,11 +39,13 @@
 
 - name: Copy parcel files into correct location
   copy:
-    src: "{{ item.path }}"
+    src: "{{ file_item.path }}"
     dest: "{{ repo_dir }}"
     remote_src: yes
     mode: 0644
   with_items: "{{ files.files }}"
+  loop_control:
+    loop_var: file_item
 
 - name: Remove temp directory
   file:

@@ -81,12 +81,24 @@
   tags:
     - kms
 
-- name: Restart and re-deploy client configs
+- name: Restart Cluster Base
   hosts: cloudera_manager
-  gather_facts: no
   roles:
-    - operations/restart_stale
+    - operations/restart_cluster
   tags:
-    - restart
+    - kts
   vars:
-    client_config_timeout: "{{ setup_hdfs_encryption_client_config_timeout | default(300) }}"
+    cluster_restart_timeout: 3600
+    cluster_to_restart: "{{ cluster_name }}"
+
+- name: Restart Cluster Stream
+  hosts: cloudera_manager
+  roles:
+    - operations/restart_cluster
+  tags:
+    - kts
+    - stream
+  vars:
+    cluster_restart_timeout: 3600
+    cluster_to_restart: "{{ cluster_name }}-stream"
+  ignore_errors: yes
