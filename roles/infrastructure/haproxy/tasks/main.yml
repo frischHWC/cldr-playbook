@@ -24,7 +24,5 @@
     name: haproxy
     enabled: yes
     state: restarted
-  args:
-    warn: false
 
 

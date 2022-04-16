@@ -48,7 +48,5 @@
     name: "{{ item }}"
     state: restarted
     enabled: yes
-  args:
-    warn: false
   with_items:
     - "{{ krb5_services }}"

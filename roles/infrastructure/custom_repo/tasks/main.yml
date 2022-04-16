@@ -34,5 +34,3 @@
     name: "{{ httpd_service }}"
     enabled: yes
     state: restarted
-  args:
-    warn: false
