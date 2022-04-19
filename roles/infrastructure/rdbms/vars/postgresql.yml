@@ -17,7 +17,7 @@ postgresql_global_config_options:
   - option: listen_addresses
     value: '*'
   - option: max_connections
-    value: 300
+    value: 1000
 postgresql_hba_entries:
   - {type: local, database: all, user: postgres, auth_method: peer}
   - {type: local, database: all, user: all, auth_method: peer}
