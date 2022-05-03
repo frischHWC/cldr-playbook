@@ -29,4 +29,3 @@ collections:
   - name: community.general
   - name: community.mysql
   - name: freeipa.ansible_freeipa
-    version: <=1.5.3
