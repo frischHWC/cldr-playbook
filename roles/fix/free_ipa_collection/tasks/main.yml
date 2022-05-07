@@ -30,3 +30,18 @@
     line: CA_DBUS_TIMEOUT = 360
   ignore_errors: true
 
+- name: Add a sleep before calling certmonger 
+  lineinfile:
+    path: /usr/lib/python3.6/site-packages/ipaserver/install/dogtaginstance.py
+    insertbefore: '.*find_ca_by_nickname.*'
+    line: '            time.sleep(20)'
+    state: present
+  ignore_errors: true
+
+- name: Raise timeout for CA wait
+  lineinfile:
+    path: /usr/lib/python3.6/site-packages/ipalib/constants.py
+    regexp: '^CA_DBUS_TIMEOUT'
+    line: CA_DBUS_TIMEOUT = 360
+  ignore_errors: true
+

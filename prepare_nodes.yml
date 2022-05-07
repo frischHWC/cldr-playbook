@@ -38,7 +38,7 @@
     - users
 
 - name: Install JDK
-  hosts: cloudera_manager, cluster, tls
+  hosts: all
   become: yes
   roles:
     - prereqs/jdk
