@@ -28,10 +28,8 @@
   hosts: krb5_server
   become: yes
   roles:
-    - role: prereqs/jdk
+    - role: fix/freeipa-jdk
       when: ansible_distribution == "RedHat" and ansible_distribution_version == "8.2"
-  vars:
-    jdk_package: "java-1.8.0-openjdk-devel-1:1.8.0.265.b01-0.el8_2"
   tags:
     - security
     - free_ipa
