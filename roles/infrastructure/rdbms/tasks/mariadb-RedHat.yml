@@ -30,4 +30,4 @@
 
 - name: Install MariaDB
   include_role:
-    name: ansible-role-mysql
+    name: geerlingguy.mysql
