@@ -103,6 +103,13 @@
     file: "main-{{ ansible_os_family }}.yml"
   when: not((ansible_virtualization_type == "docker" or ansible_virtualization_type == "container") and ansible_virtualization_role == "guest")
 
+- name: Ensure logind is enabled and unmasked
+  systemd:
+    name: systemd-logind
+    enabled: yes
+    masked: no
+  ignore_errors: true
+
 - name: Install python 3
   package:
     name: python3

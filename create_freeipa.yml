@@ -31,7 +31,7 @@
     - role: prereqs/jdk
   vars:
     jdk_package: "java-1.8.0-openjdk-devel-1:1.8.0.265.b01-0.el8_2"
-  when: ansible_distribution == 'RedHat' and ansible_distribution_major_version == 8 and ansible_distribution_minor_version == 2 
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8" and ansible_distribution_minor_version == "2" 
   tags:
     - security
     - free_ipa
