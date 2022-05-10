@@ -49,3 +49,33 @@
     dest: /usr/share/java/mysql-connector-java.jar
     remote_src: yes
     mode: 0644
+
+- name: Install Mysql packages 
+  package: 
+    name: 
+      - mysql
+      - mysql-devel
+    state: enabled
+  when: ansible_distribution == "RedHat" and ansible_major_distribution_version == "8"
+  ignore_errors: true
+
+- name: Send my_config.h for RHEL 8 
+  template: 
+    src: my_config.h
+    dest:  /usr/include/mysql/my_config.h
+  when: ansible_distribution == "RedHat" and ansible_major_distribution_version == "8"
+
+- name: Install Mysql packages for python
+  pip: 
+    name: MySQL-python
+  when: ansible_distribution == "RedHat" and ansible_major_distribution_version == "8"
+  ignore_errors: true
+
+- name: Chmod on mysql python files
+  shell: chmod -R 755 /usr/lib64/python2.7/site-packages/MySQLdb /usr/lib64/python2.7/site-packages/MySQL_python* /usr/lib64/python2.7/site-packages/_mysql*
+  when: ansible_distribution == "RedHat" and ansible_major_distribution_version == "8"
+  ignore_errors: true
+
+
+# Fix for RHEL 8 (creates the /usr/include/mysql/my_config.h)
+# Fix for RHEL 8: Install MySql-Python and change owner on python files created
