@@ -50,6 +50,13 @@
     remote_src: yes
     mode: 0644
 
+- name: Remove mariadb packages id needed
+  package: 
+    name: mariadb-devel
+    state: absent
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
+  ignore_errors: true
+
 - name: Install Mysql packages 
   package: 
     name: 
@@ -66,8 +73,7 @@
   when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
 
 - name: Install Mysql packages for python
-  pip: 
-    name: MySQL-python
+  shell: pip install MySQL-python --force-reinstall --ignore-installed
   when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
   ignore_errors: true
 
