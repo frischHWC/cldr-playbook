@@ -55,7 +55,7 @@
     name: 
       - mysql
       - mysql-devel
-    state: enabled
+    state: installed
   when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
   ignore_errors: true
 
