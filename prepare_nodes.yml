@@ -52,6 +52,8 @@
   roles:
     - role: prereqs/mysql_connector
       when: database_type == 'mysql' or database_type == 'mariadb'
+    - role: prereqs/mysql_fix_rhel8
+      when: database_type == 'mysql' or database_type == 'mariadb' and ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
   tags:
     - mysql_connector
 

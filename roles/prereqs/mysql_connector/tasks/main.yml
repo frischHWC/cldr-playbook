@@ -49,35 +49,3 @@
     dest: /usr/share/java/mysql-connector-java.jar
     remote_src: yes
     mode: 0644
-
-- name: Remove mariadb packages id needed
-  package: 
-    name: mariadb-devel
-    state: absent
-  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
-  ignore_errors: true
-
-- name: Install Mysql packages 
-  package: 
-    name: 
-      - mysql
-      - mysql-devel
-    state: installed
-  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
-  ignore_errors: true
-
-- name: Send my_config.h for RHEL 8 
-  template: 
-    src: my_config.h
-    dest:  /usr/include/mysql/my_config.h
-  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
-
-- name: Install Mysql packages for python
-  shell: pip install MySQL-python --force-reinstall --ignore-installed
-  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
-  ignore_errors: true
-
-- name: Chmod on mysql python files
-  shell: chmod -R 755 /usr/lib64/python2.7/site-packages/MySQLdb /usr/lib64/python2.7/site-packages/MySQL_python* /usr/lib64/python2.7/site-packages/_mysql*
-  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
-  ignore_errors: true
