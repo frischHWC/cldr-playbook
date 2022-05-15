@@ -38,6 +38,10 @@ HBASE:
         <name>phoenix.schema.isNamespaceMappingEnabled</name>
         <value>true</value>
       </property>
+      <property>
+        <name>hbase.ipc.server.max.callqueue.size</name>
+        <value>2147483648</value>
+      </property>
 PHOENIX:
   PHOENIX_QUERY_SERVER:
     'phoenix-site.xml_role_safety_valve': >

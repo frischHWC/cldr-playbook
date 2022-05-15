@@ -23,6 +23,7 @@
 - name: Create temp directory
   hosts: all
   become: yes
+  gather_facts: no
   tasks:
   - name: Create temp dir
     file:
