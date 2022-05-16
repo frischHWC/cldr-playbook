@@ -13,6 +13,7 @@
     endpoint: "/cm/commands/generateCmca"
     method: POST
     body: "{{ lookup('template', 'auto-tls.json') }}"
+    timeout: 360
   ignore_errors: true
   when: use_password
 
