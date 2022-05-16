@@ -20,6 +20,22 @@
   tasks:
     - import_tasks: tasks/group_hosts_by_tls.yml
 
+- name: Create temp directory
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Create temp dir
+    file:
+     path: "{{ local_temp_dir }}/"
+     state: directory
+     mode: 0777
+     group: root
+     owner: root
+  tags:
+    - os
+    - tmp_dir
+
 - name: Apply OS pre-requisite configurations
   hosts: cloudera_manager, cluster
   become: yes
@@ -44,33 +60,3 @@
     - prereqs/jdk
   tags:
     - jdk
-
-- name: Install MySQL Connector
-  hosts: cloudera_manager, cluster
-  gather_facts: no
-  become: yes
-  roles:
-    - role: prereqs/mysql_connector
-      when: database_type == 'mysql' or database_type == 'mariadb'
-  tags:
-    - mysql_connector
-
-- name: Install Oracle Connector
-  hosts: cloudera_manager, cluster
-  gather_facts: no
-  become: yes
-  roles:
-    - role: prereqs/oracle_connector
-      when: database_type == 'oracle'
-  tags:
-    - oracle_connector
-
-- name: Install Postgres Connector
-  hosts: cloudera_manager, cluster
-  gather_facts: no
-  become: yes
-  roles:
-    - role: prereqs/psql_connector
-      when: database_type == 'postgresql'
-  tags:
-    - psql_connector

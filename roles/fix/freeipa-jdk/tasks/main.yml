@@ -1,0 +1,12 @@
+---
+- name: Remove old JDK
+  yum: 
+    name: "java-1.8.0-openjdk-devel"
+    state: absent
+    update_cache: yes
+
+- name: Install correct 1.8 JDK
+  package:
+    name: "java-1.8.0-openjdk-devel-1:1.8.0.265.b01-0.el8_2"
+    state: present
+    update_cache: yes

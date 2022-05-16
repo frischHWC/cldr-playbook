@@ -24,6 +24,17 @@
     - kerberos
     - tls
 
+- name: Install JDK 8 (as required by tomcat used)
+  hosts: krb5_server
+  become: yes
+  roles:
+    - role: fix/freeipa-jdk
+      when: ansible_distribution == "RedHat" and ansible_distribution_version == "8.2"
+  tags:
+    - security
+    - free_ipa
+    - kerberos
+    - tls
 
 - name: Install FreeIPA server
   hosts: krb5_server

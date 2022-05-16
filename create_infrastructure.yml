@@ -58,3 +58,37 @@
     - infrastructure/haproxy
   tags:
     - ha
+
+# Install DBs connectors
+
+- name: Install MySQL Connector
+  hosts: cloudera_manager, cluster
+  gather_facts: no
+  become: yes
+  roles:
+    - role: prereqs/mysql_connector
+      when: database_type == 'mysql' or database_type == 'mariadb'
+    - role: prereqs/mysql_fix_rhel8
+      when: database_type == 'mysql' or database_type == 'mariadb' and ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
+  tags:
+    - mysql_connector
+
+- name: Install Oracle Connector
+  hosts: cloudera_manager, cluster
+  gather_facts: no
+  become: yes
+  roles:
+    - role: prereqs/oracle_connector
+      when: database_type == 'oracle'
+  tags:
+    - oracle_connector
+
+- name: Install Postgres Connector
+  hosts: cloudera_manager, cluster
+  gather_facts: no
+  become: yes
+  roles:
+    - role: prereqs/psql_connector
+      when: database_type == 'postgresql'
+  tags:
+    - psql_connector
