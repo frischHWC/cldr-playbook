@@ -36,6 +36,17 @@
     - kerberos
     - tls
 
+- name: Install JDK 11
+  hosts: krb5_server
+  become: yes
+  roles:
+    - prereqs/jdk
+  tags:
+    - security
+    - free_ipa
+    - kerberos
+    - tls
+
 - name: Install FreeIPA server
   hosts: krb5_server
   become: yes
