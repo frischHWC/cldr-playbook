@@ -162,7 +162,7 @@ OptionalCerts:
 ExternalAuth:
   Type: LDAP
   Config:
-    ldap_url: "ldap://{{ groups.krb5_server | first | default(omit) }}:389"
+    ldap_url: "ldap://{{ groups.krb5_server | first | default(omit) }}:636"
     ldap_bind_dn: "uid=admin,cn=users,cn=accounts,{% for i in realm_splitted %}dc={{ i | lower }}{% if not loop.last %},{% endif %}{% endfor %}"
     ldap_bind_pw: "{{ default_password }}"
     ldap_user_search_base: "cn=accounts,{% for i in realm_splitted %}dc={{ i | lower }}{% if not loop.last %},{% endif %}{% endfor %}"

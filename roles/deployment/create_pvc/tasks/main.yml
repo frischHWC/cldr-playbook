@@ -1,18 +1,18 @@
 ---
 
 ### Add ECS hosts to the cluster ###
-- name: DEBUG - add_hosts
-  debug:
-    msg: "{{ lookup('template', 'add_hosts.json') }}"
-  when: debug | default(false)
+# Remove adding hosts as with auto-tls its not working
+# - name: DEBUG - add_hosts
+#   debug:
+#     msg: "{{ lookup('template', 'add_hosts.json') }}"
+#   when: debug | default(false)
 
-- name: Add hosts to the cluster
-  cm_api:
-    endpoint: /cm/commands/hostInstall
-    method: POST
-    body: "{{ lookup('template', 'add_hosts.json') }}"
-    timeout: "{{ cluster_restart_timeout | default(3000) }}"
-
+# - name: Add hosts to the cluster
+#   cm_api:
+#     endpoint: /cm/commands/hostInstall
+#     method: POST
+#     body: "{{ lookup('template', 'add_hosts.json') }}"
+#     timeout: "{{ cluster_restart_timeout | default(3000) }}"
 
 - name: Get hosts details
   cm_api:
@@ -25,7 +25,6 @@
   debug:
     msg: "{{ host_details }}"
   when: debug | default(false)
-
 
 - name: Create host mappings
   set_fact: 
