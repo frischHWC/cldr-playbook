@@ -157,19 +157,6 @@ Vault:
 OptionalCerts:
   MiscCaCerts: ""
 
-## If you want to use LDAP, uncomment the following
-{% if free_ipa %}
-ExternalAuth:
-  Type: LDAP
-  Config:
-    ldap_url: "ldap://{{ groups.krb5_server | first | default(omit) }}:636"
-    ldap_bind_dn: "uid=admin,cn=users,cn=accounts,{% for i in realm_splitted %}dc={{ i | lower }}{% if not loop.last %},{% endif %}{% endfor %}"
-    ldap_bind_pw: "{{ default_password }}"
-    ldap_user_search_base: "cn=accounts,{% for i in realm_splitted %}dc={{ i | lower }}{% if not loop.last %},{% endif %}{% endfor %}"
-    ldap_user_search_filter: "(&(uid={0})(objectClass=person))"
-    ldap_group_search_base: "cn=accounts,{% for i in realm_splitted %}dc={{ i | lower }}{% if not loop.last %},{% endif %}{% endfor %}"
-    ldap_group_search_filter: "(&(member={1})(objectClass=posixgroup))" 
-{% endif %}
 #
 ## You should fill in the following information. Otherwise, you might not be able to
 ## communicate with the Cloudera Manager instance or send diagnostics to Cloudera.

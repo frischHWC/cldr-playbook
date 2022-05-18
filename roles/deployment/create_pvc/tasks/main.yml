@@ -1,6 +1,10 @@
 ---
 
 ### Add ECS hosts to the cluster ###
+# TODO: CHANGE this to be able to add hosts with auto-tls
+# TODO: - Generate certs using certmanager ???
+# TODO: - addCustomCerts with CM API call
+# TODO: Then add hosts to the cluster
 # Remove adding hosts as with auto-tls its not working
 # - name: DEBUG - add_hosts
 #   debug:
