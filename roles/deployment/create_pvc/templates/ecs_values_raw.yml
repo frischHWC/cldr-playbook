@@ -180,7 +180,7 @@ OptionalCerts:
 #   WebConsoleUrl: ""
 
 # ## For Rancher, set the appropriate application domain name. e.g. rancher-1.vpc.cloudera.com
-# ApplicationDomain: "{{ pvc_app_domain_name }}"
+ApplicationDomain: "{{ pvc_app_domain_name }}"
 
 
 ## Openshift injects a valid fsGroup value for securityContext for its deployments. Since Rke2 doesn't have
