@@ -94,7 +94,7 @@
   become: yes
   any_errors_fatal: true
   roles:
-    - role: cloudera_manager/agent_config
+    - role: cloudera_manager/agent_config_pvc
       when: pvc_type == "ECS"
       
 - name: Enable a PvC-ECS cluster
