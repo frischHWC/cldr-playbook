@@ -98,7 +98,7 @@
       when: pvc_type == "ECS"
 
 - name: Apply specific pre-requisites for ECS
-  hosts: pvc_hosts
+  hosts: all
   become: yes
   roles:
     - role: prereqs/pvc_ecs
