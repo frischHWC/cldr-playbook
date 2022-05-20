@@ -58,6 +58,14 @@
 - set_fact: 
     experience_already_exists: "{{ false if experience_cluster_name == '' else true }}"
 
+- name: Stop Experience cluster
+  cm_api:
+    endpoint: "/clusters/{{ cluster_name_pvc }}/commands/stop"
+    method: POST
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  when: experience_already_exists
+  ignore_errors: true
+
 - name: Delete Experience cluster
   cm_api:
     endpoint: "/clusters/{{ cluster_name_pvc }}"
