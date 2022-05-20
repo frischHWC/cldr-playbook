@@ -43,3 +43,18 @@
   service:
     name: dnsmasq
     state: restarted
+
+# Add local server as first dns
+- name: Make /etc/resolv.conf editable
+  shell: sudo chattr -i /etc/resolv.conf
+
+- name: Insert local nameserver as first dns
+  lineinfile:
+    path: /etc/resolv.conf
+    insertbefore: BOF
+    line: nameserver 127.0.0.1
+
+- name: Add line in /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ pvc_ecs_server_host_ip.stdout }} *.apps.{{ pvc_app_domain }}"
