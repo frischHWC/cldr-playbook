@@ -291,7 +291,7 @@
     endpoint: /controlPlanes/commands/installEmbeddedControlPlane
     method: POST
     body: "{{ temp_ecs_file_content }}"
-    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+    timeout: 10800
   register: start_pvc_result
 
 - name: Remove temporary start_cp file

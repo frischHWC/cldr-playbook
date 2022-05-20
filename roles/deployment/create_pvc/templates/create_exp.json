@@ -85,7 +85,7 @@
             "items": [
               {
                 "name": "app_domain",
-                "value": "{{ pvc_app_domain_name }}",
+                "value": "{{ pvc_app_domain }}",
                 "sensitive": false
               },
               {
