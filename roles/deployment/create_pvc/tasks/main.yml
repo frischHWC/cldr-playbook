@@ -1,18 +1,22 @@
 ---
 
 ### Add ECS hosts to the cluster ###
-- name: DEBUG - add_hosts
-  debug:
-    msg: "{{ lookup('template', 'add_hosts.json') }}"
-  when: debug | default(false)
+# TODO: CHANGE this to be able to add hosts with auto-tls
+# TODO: - Generate certs using certmanager ???
+# TODO: - addCustomCerts with CM API call
+# TODO: Then add hosts to the cluster
+# Remove adding hosts as with auto-tls its not working
+# - name: DEBUG - add_hosts
+#   debug:
+#     msg: "{{ lookup('template', 'add_hosts.json') }}"
+#   when: debug | default(false)
 
-- name: Add hosts to the cluster
-  cm_api:
-    endpoint: /cm/commands/hostInstall
-    method: POST
-    body: "{{ lookup('template', 'add_hosts.json') }}"
-    timeout: "{{ cluster_restart_timeout | default(3000) }}"
-
+# - name: Add hosts to the cluster
+#   cm_api:
+#     endpoint: /cm/commands/hostInstall
+#     method: POST
+#     body: "{{ lookup('template', 'add_hosts.json') }}"
+#     timeout: "{{ cluster_restart_timeout | default(3000) }}"
 
 - name: Get hosts details
   cm_api:
@@ -26,7 +30,6 @@
     msg: "{{ host_details }}"
   when: debug | default(false)
 
-
 - name: Create host mappings
   set_fact: 
     hosts_mapping: "{{ hosts_mapping | default([]) + host_details.json | community.general.json_query(query) }}"
@@ -38,6 +41,30 @@
   debug:
     msg: "{{ hosts_mapping }}"
   when: debug | default(false)
+
+### Delete Experience cluster if already existing ###
+- name: Check about Experience cluster
+  cm_api:
+    endpoint: /clusters 
+    method: GET
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  register: all_clusters
+
+- set_fact: 
+    experience_cluster_name: "{{ all_clusters.json | community.general.json_query(query) }}"
+  vars:
+    query: "items[?name == '{{ cluster_name_pvc }}' ].name"
+
+- set_fact: 
+    experience_already_exists: "{{ false if experience_cluster_name == '' else true }}"
+
+- name: Delete Experience cluster
+  cm_api:
+    endpoint: "/clusters/{{ cluster_name_pvc }}"
+    method: DELETE
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  when: experience_already_exists
+  ignore_errors: true
 
 ### Create Empty Experience cluster ###
 - name: DEBUG - hosts_exp

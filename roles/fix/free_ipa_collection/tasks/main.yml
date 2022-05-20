@@ -10,6 +10,11 @@
     - "vars/{{ ansible_facts['os_family'] }}.yml"
     - "vars/default.yml"
 
+- name: Ensure NSS is in latest version 
+  package:
+    name: nss
+    state: latest
+
 - name: Install base ipa server packages
   package:
     name: "{{ ipaserver_packages }}"

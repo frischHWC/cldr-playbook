@@ -1,4 +1,4 @@
 {
-  "kubeConfig" : "{{ kube_config }}",
+  "kubeConfig" : "",
   "valuesYaml" : "{{ pvc_oc_destroy_values_yaml }}"
 }

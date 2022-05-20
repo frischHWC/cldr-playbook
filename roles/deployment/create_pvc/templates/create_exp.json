@@ -85,7 +85,7 @@
             "items": [
               {
                 "name": "app_domain",
-                "value": "vpc.cloudera.com",
+                "value": "{{ pvc_app_domain_name }}",
                 "sensitive": false
               },
               {
