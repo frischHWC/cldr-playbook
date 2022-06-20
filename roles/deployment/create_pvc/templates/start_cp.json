@@ -1,6 +1,6 @@
 {
   "remoteRepoUrl": "{{ pvc_repo_url }}",
-  "experienceClusterName": "{{ cluster_name_pvc }}",
+  "containerizedClusterName": "{{ cluster_name_pvc }}",
   "datalakeClusterName": "{{ cluster_name }}",
   "valuesYaml": "{{ ecs_values_yaml }}"
 }

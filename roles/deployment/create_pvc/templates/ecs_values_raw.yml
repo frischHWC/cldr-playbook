@@ -122,7 +122,8 @@ Services:
 
 ContainerInfo:
   ## The mode can be public or custom
-  Mode: embedded
+  Mode: public
+  CopyDocker: false
   # CopyDocker: true
   ## Docker read credentials are typically required.
   # Username:
