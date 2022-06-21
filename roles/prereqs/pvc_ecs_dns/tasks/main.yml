@@ -21,7 +21,7 @@
     state: latest
     
 - name: Resolve ECS server's IP
-  shell: "cat /etc/hosts | grep {{ pvc_ecs_server_host }} | cut -d' ' -f1 | xargs"
+  shell: "cat /etc/hosts | grep -m 1 {{ pvc_ecs_server_host }} | cut -d' ' -f1 | xargs"
   register: pvc_ecs_server_host_ip
 
 - name: DEBUG - ECS server's IP

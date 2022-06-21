@@ -21,7 +21,7 @@
 
 # Add CM server with dnsmasq as first dns for all other servers
 - name: Resolve CM server's IP
-  shell: "cat /etc/hosts | grep {{ groups['cloudera_manager'][0] }} | cut -d' ' -f1 | xargs"
+  shell: "cat /etc/hosts | grep -m 1 {{ groups['cloudera_manager'][0] }} | cut -d' ' -f1 | xargs"
   register: cm_host_ip
 
 - name: Make /etc/resolv.conf editable
@@ -34,7 +34,7 @@
     line: "nameserver {{ cm_host_ip }}"
 
 - name: Resolve ECS server's IP
-  shell: "cat /etc/hosts | grep {{ pvc_ecs_server_host }} | cut -d' ' -f1 | xargs"
+  shell: "cat /etc/hosts | grep -m 1 {{ pvc_ecs_server_host }} | cut -d' ' -f1 | xargs"
   register: pvc_ecs_server_host_ip
 
 - name: Add ECS servers line in /etc/hosts
