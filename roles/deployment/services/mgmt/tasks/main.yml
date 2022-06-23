@@ -39,6 +39,12 @@
     - "'MGMT' not in api_cm_service_response.content"
     - "'CMS instance already exists' not in api_cm_service_response.content"
 
+# TLS fix for CDH 6
+- name: Fix TLS Settings if using CDH 6 and auto-tls
+  include_role:
+    name: fix/cms_tls
+  when: auto_tls and cloudera_manager_version is version('7.0.0','<')
+
 - name: Start Cloudera Management Service
   cm_api:
     endpoint: /cm/service/commands/restart

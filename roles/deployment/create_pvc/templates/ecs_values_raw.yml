@@ -121,8 +121,9 @@ Services:
   #     replicaCount: 2
 
 ContainerInfo:
-  ## The mode can be public or custom
-  Mode: embedded
+  ## The mode can be public or custom or embedded (embedded will make a copy and setup internal docker registry with all images)
+  Mode: public
+  CopyDocker: true
   # CopyDocker: true
   ## Docker read credentials are typically required.
   # Username:

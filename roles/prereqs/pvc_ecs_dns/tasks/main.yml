@@ -13,31 +13,28 @@
 # limitations under the License.
 
 ---
-# Required NFS package for longhorn
-- name: Install nfs-utils package
+
+# Set wildcard DNS entry using a dnsmasq installed on CM machine
+- name: Install dnsmasq package to provide a basic DNS
   package:
-    name: nfs-utils
+    name: dnsmasq
     state: latest
-
-# Add CM server with dnsmasq as first dns for all other servers
-- name: Resolve CM server's IP
-  shell: "cat /etc/hosts | grep -m 1 {{ groups['cloudera_manager'][0] }} | cut -d' ' -f1 | xargs"
-  register: cm_host_ip
-
-- name: Make /etc/resolv.conf editable
-  shell: sudo chattr -i /etc/resolv.conf
-
-- name: Insert CM server as first dns
-  lineinfile:
-    path: /etc/resolv.conf
-    insertbefore: BOF
-    line: "nameserver {{ cm_host_ip.stdout }}"
-
+    
 - name: Resolve ECS server's IP
   shell: "cat /etc/hosts | grep -m 1 {{ pvc_ecs_server_host }} | cut -d' ' -f1 | xargs"
   register: pvc_ecs_server_host_ip
 
-- name: Add ECS servers line in /etc/hosts
-  lineinfile:
-    path: /etc/hosts
-    line: "{{ pvc_ecs_server_host_ip.stdout }} *.apps.{{ pvc_app_domain }}"
+- name: DEBUG - ECS server's IP
+  debug:
+    msg: "{{ pvc_ecs_server_host_ip }}"
+  when: debug | default(false)
+
+- name: Set DNS wildcard for application domain
+  template:
+    src: dnsmasq-ecs.conf
+    dest: /etc/dnsmasq.d/
+
+- name: Restart dnsmasq
+  service:
+    name: dnsmasq
+    state: restarted
