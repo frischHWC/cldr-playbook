@@ -123,7 +123,7 @@ Services:
 ContainerInfo:
   ## The mode can be public or custom
   Mode: public
-  CopyDocker: false
+  CopyDocker: true
   # CopyDocker: true
   ## Docker read credentials are typically required.
   # Username:
