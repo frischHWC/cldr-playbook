@@ -112,6 +112,11 @@
                 "name": "nfs_over_provisioning",
                 "value": "{{ nfs_over_provisioning }}",
                 "sensitive": false
+              },
+              {
+                "name": "longhorn_replication",
+                "value": "{{ longhorn_replication }}",
+                "sensitive": false
               }
             ]
           },
