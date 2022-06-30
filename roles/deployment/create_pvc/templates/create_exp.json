@@ -95,14 +95,24 @@
               },
               {
                 "name": "lsoDataPath",
-                "value": "/ecs/local-storage",
+                "value": "{{ ecs_local_storage }}",
                 "sensitive": false
               },
               {
                 "name": "defaultDataPath",
-                "value": "/ecs/longhorn-storage",
+                "value": "{{ ecs_longhorn_storage }}",
                 "sensitive": false
               },
+              {
+                "name": "nfs_provisioned",
+                "value": "{{ nfs_provisioned }}",
+                "sensitive": false
+              },
+              {
+                "name": "nfs_over_provisioning",
+                "value": "{{ nfs_over_provisioning }}",
+                "sensitive": false
+              }
             ]
           },
           "displayName": "ECS"
