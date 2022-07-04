@@ -1,0 +1,11 @@
+---
+cloudera_manager_repo_url: https://archive.cloudera.com/p/cm7/7.6.5/redhat7/yum/
+pvc_repo_url: https://archive.cloudera.com/p/cdp-pvc-ds/1.4.0-b2677
+pvc_version: 1.4.0
+
+longhorn_replication: 2
+nfs_over_provisioning: 200
+nfs_provisioned: 100
+ecs_longhorn_storage: /ecs/longhorn-storage
+ecs_local_storage: /ecs/local-storage
+
