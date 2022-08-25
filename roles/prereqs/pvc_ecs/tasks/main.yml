@@ -56,3 +56,4 @@
   lineinfile:
     path: /etc/hosts
     line: "{{ pvc_ecs_server_host_ip.stdout }} *.apps.{{ pvc_app_domain }}"
+  ignore_errors: true
