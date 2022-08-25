@@ -32,6 +32,7 @@
     path: /etc/resolv.conf
     insertbefore: BOF
     line: "nameserver {{ cm_host_ip.stdout }}"
+  ignore_errors: true
 
 - name: Resolve ECS server's IP
   shell: "cat /etc/hosts | grep -m 1 {{ pvc_ecs_server_host }} | cut -d' ' -f1 | xargs"
