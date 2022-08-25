@@ -19,10 +19,20 @@
     name: nfs-utils
     state: latest
 
+# Required e2fsprog package
+- name: Install e2fsprogs package
+  package:
+    name: e2fsprogs
+    state: latest
+
 # Add CM server with dnsmasq as first dns for all other servers
 - name: Resolve CM server's IP
   shell: "cat /etc/hosts | grep -m 1 {{ groups['cloudera_manager'][0] }} | cut -d' ' -f1 | xargs"
   register: cm_host_ip
+
+- debug: 
+    msg: "Insert into /etc/resolv.conf line: nameserver {{ cm_host_ip.stdout }}"
+  when: debug | default(false)
 
 - name: Make /etc/resolv.conf editable
   shell: sudo chattr -i /etc/resolv.conf
@@ -37,6 +47,10 @@
 - name: Resolve ECS server's IP
   shell: "cat /etc/hosts | grep -m 1 {{ pvc_ecs_server_host }} | cut -d' ' -f1 | xargs"
   register: pvc_ecs_server_host_ip
+
+- debug: 
+    msg: "Insert into /etc/hosts line: {{ pvc_ecs_server_host_ip.stdout }} *.apps.{{ pvc_app_domain }}"
+  when: debug | default(false)
 
 - name: Add ECS servers line in /etc/hosts
   lineinfile:
