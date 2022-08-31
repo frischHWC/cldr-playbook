@@ -14,27 +14,14 @@
 
 ---
 
-- name: Restart Cluster Base
+- name: Restart All Clusters
   hosts: cloudera_manager
   roles:
-    - operations/restart_cluster
+    - operations/restart_all_clusters
   tags:
     - kts
   vars:
     cluster_restart_timeout: 3600
-    cluster_to_restart: "{{ cluster_name }}"
-
-- name: Restart Cluster Stream
-  hosts: cloudera_manager
-  roles:
-    - operations/restart_cluster
-  tags:
-    - kts
-    - stream
-  vars:
-    cluster_restart_timeout: 3600
-    cluster_to_restart: "{{ cluster_name }}-stream"
-  ignore_errors: yes
 
 - name: Group hosts using host template information
   hosts: all
@@ -81,24 +68,11 @@
   tags:
     - kms
 
-- name: Restart Cluster Base
+- name: Restart All Clusters
   hosts: cloudera_manager
   roles:
-    - operations/restart_cluster
+    - operations/restart_all_clusters
   tags:
     - kts
   vars:
     cluster_restart_timeout: 3600
-    cluster_to_restart: "{{ cluster_name }}"
-
-- name: Restart Cluster Stream
-  hosts: cloudera_manager
-  roles:
-    - operations/restart_cluster
-  tags:
-    - kts
-    - stream
-  vars:
-    cluster_restart_timeout: 3600
-    cluster_to_restart: "{{ cluster_name }}-stream"
-  ignore_errors: yes

@@ -1,0 +1,12 @@
+---
+
+- name: Get clusters
+  cm_api:
+    endpoint: /clusters?clusterType=any
+  register: clusters
+
+- name: Restart clusters with stale configuration
+  include_tasks: restart.yml
+  loop: "{{ clusters.json['items'].name }}"
+  loop_control:
+    loop_var: cluster_to_restart
