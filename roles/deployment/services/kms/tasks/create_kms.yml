@@ -110,6 +110,10 @@
 - set_fact:
     primary_kms_role_query: items[?hostRef.hostname==`{{ cloudera_manager_api_hosts[groups.kms_servers[0]]['hostname'] }}`].name
 
+- name: Wait to generate missing credentials before starting
+  pause:
+    seconds: 30 
+
 - name: Start first KMS server instance
   cm_api:
     endpoint: /clusters/{{ cluster.name | urlencode() }}/services/{{ kms_service_name }}/roleCommands/start

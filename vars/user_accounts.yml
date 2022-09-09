@@ -199,6 +199,10 @@ local_accounts:
     comment: Sqoop2
     extra_groups: [sqoop]
 
+  - user: ssb
+    home: /var/lib/ssb
+    comment: SSB
+
   - user: streamsmsgmgr
     home: /var/lib/streams_messaging_manager
     comment: Streams Messaging Manager
