@@ -25,23 +25,15 @@
     name: e2fsprogs
     state: latest
 
-# Add CM server with dnsmasq as first dns for all other servers
-- name: Resolve CM server's IP
-  shell: "cat /etc/hosts | grep -m 1 {{ groups['cloudera_manager'][0] }} | cut -d' ' -f1 | xargs"
-  register: cm_host_ip
-
-- debug: 
-    msg: "Insert into /etc/resolv.conf line: nameserver {{ cm_host_ip.stdout }}"
-  when: debug | default(false)
-
+# Add PvC ECS server with dnsmasq as first dns for all other servers
 - name: Make /etc/resolv.conf editable
   shell: sudo chattr -i /etc/resolv.conf
 
-- name: Insert CM server as first dns
+- name: Insert local server as first dns
   lineinfile:
     path: /etc/resolv.conf
     insertbefore: BOF
-    line: "nameserver {{ cm_host_ip.stdout }}"
+    line: "nameserver 127.0.0.1"
   ignore_errors: true
 
 - name: Resolve ECS server's IP
