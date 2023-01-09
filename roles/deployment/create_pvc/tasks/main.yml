@@ -209,6 +209,7 @@
   template:
     src: "start_cp.json"
     dest: "{{ temp_ecs_file.path }}"
+    mode: 0644
 
 - name: Read ecs file values
   set_fact:
