@@ -1,0 +1,25 @@
+{
+    "customCA" : false,
+    "configureAllServices" : "true",
+    "sshPort" : 22,
+    {% if free_ipa %}"trustedCaCerts" : "/etc/ipa/ca.crt",{% endif %}
+    "userName" : "root",
+    "password": "{{ node_password }}",
+
+    "interpretAsFilenames" : true,
+    "cmHostCert" : "~/certs/{{ groups['cloudera_manager'] | [0] }}",
+    "cmHostKey" : "~/certs/{{ groups['cloudera_manager'] | [0] }}",
+    "caCert" : "~/certs/rootca.crt",
+    "keystorePasswd" : "~/certs/key.pwd",
+    "truststorePasswd" : "~/certs/truststore.pwd",
+    "hostCerts" : [ 
+        {% for host in groups['all'] %}
+        {
+            "hostname" : "{{ host }}",
+            "certificate" : "~/certs/{{ host }}.crt",
+            "key" : "~/certs/{{ host }}.key"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ]
+} 
+    

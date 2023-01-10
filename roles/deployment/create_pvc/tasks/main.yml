@@ -227,36 +227,36 @@
   ansible.builtin.tempfile:
     state: file
     suffix: temp
-  register: temp_pvc_oc_destroy_file
+  register: temp_pvc_destroy_file
 
-- name: DEBUG - temp_pvc_oc_destroy_file
+- name: DEBUG - temp_pvc_destroy_file
   debug:
-    msg: "{{ temp_pvc_oc_destroy_file }}"
+    msg: "{{ temp_pvc_destroy_file }}"
   when: debug | default(false)
 
-- name: Inspect pvc_oc values and push it on one line
+- name: Inspect pvc values and push it on one line
   set_fact:
-    pvc_oc_destroy_values_yaml: "{{ lookup('template', 'pvc_oc_destroy_values_raw.yml') | replace('\n', '\\n') | replace('\"', '\\\"' ) }}"
+    pvc_destroy_values_yaml: "{{ lookup('template', 'pvc_destroy_values_raw.yml') | replace('\n', '\\n') | replace('\"', '\\\"' ) }}"
 
 - name: Template uninstall_cp to a single temporary file
   template:
     src: "uninstall_cp.json"
-    dest: "{{ temp_pvc_oc_destroy_file.path }}"
+    dest: "{{ temp_pvc_destroy_file.path }}"
 
-- name: Read pvc_oc file values
+- name: Read pvc file values
   set_fact:
-    temp_pvc_oc_destroy_content: "{{ lookup('file', temp_pvc_oc_destroy_file.path ) }}"
+    temp_pvc_destroy_content: "{{ lookup('file', temp_pvc_destroy_file.path ) }}"
 
-- name: DEBUG - temp_pvc_oc_destroy_content 
+- name: DEBUG - temp_pvc_destroy_content 
   debug:
-    msg: "{{ temp_pvc_oc_destroy_content }}"
+    msg: "{{ temp_pvc_destroy_content }}"
   when: debug | default(false)
     
 - name: Remove temporary destroy_cp file
   ansible.builtin.file:
-    path: "{{ temp_pvc_oc_destroy_file.path }}"
+    path: "{{ temp_pvc_destroy_file.path }}"
     state: absent
-  when: temp_pvc_oc_destroy_file.path is defined
+  when: temp_pvc_destroy_file.path is defined
 
 ### Destroy PvC if it already exists ###
 - name: Check existing control planes
@@ -280,7 +280,7 @@
   cm_api:
     endpoint: "/controlPlanes/{{ cp_uuid }}/commands/uninstallControlPlane"
     method: POST
-    body: "{{ temp_pvc_oc_destroy_content }}"
+    body: "{{ temp_pvc_destroy_content }}"
     timeout: "{{ cluster_restart_timeout | default(3000) }}"
   when: cp_uuid | length > 0
   
