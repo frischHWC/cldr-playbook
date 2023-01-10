@@ -19,22 +19,26 @@
   package:
     name: dnsmasq
     state: latest
+  when: setup_dns_ecs
     
 - name: Resolve ECS server's IP
   shell: "cat /etc/hosts | grep -m 1 {{ pvc_ecs_server_host }} | cut -d' ' -f1 | xargs"
   register: pvc_ecs_server_host_ip
+  when: setup_dns_ecs
 
 - name: DEBUG - ECS server's IP
   debug:
     msg: "{{ pvc_ecs_server_host_ip }}"
-  when: debug | default(false)
+  when: setup_dns_ecs and debug | default(false)
 
 - name: Set DNS wildcard for application domain
   template:
     src: dnsmasq-ecs.conf
     dest: /etc/dnsmasq.d/
+  when: setup_dns_ecs
 
 - name: Restart dnsmasq
   service:
     name: dnsmasq
     state: restarted
+  when: setup_dns_ecs

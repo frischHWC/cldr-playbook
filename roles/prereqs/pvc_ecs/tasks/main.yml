@@ -28,6 +28,7 @@
 # Add PvC ECS server with dnsmasq as first dns for all other servers
 - name: Make /etc/resolv.conf editable
   shell: sudo chattr -i /etc/resolv.conf
+  when: setup_dns_ecs
 
 - name: Insert local server as first dns
   lineinfile:
@@ -35,6 +36,7 @@
     insertbefore: BOF
     line: "nameserver 127.0.0.1"
   ignore_errors: true
+  when: setup_dns_ecs
 
 - name: Resolve ECS server's IP
   shell: "cat /etc/hosts | grep -m 1 {{ pvc_ecs_server_host }} | cut -d' ' -f1 | xargs"
