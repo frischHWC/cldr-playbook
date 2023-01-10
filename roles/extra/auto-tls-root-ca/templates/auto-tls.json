@@ -1,5 +1,5 @@
 {
-    "customCA" : false,
+    "customCA" : true,
     "configureAllServices" : "true",
     "sshPort" : 22,
     {% if free_ipa %}"trustedCaCerts" : "/etc/ipa/ca.crt",{% endif %}
