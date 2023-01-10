@@ -7,8 +7,8 @@
     "privateKey": "{{ node_key_one_line }}",
 
     "interpretAsFilenames" : true,
-    "cmHostCert" : "~/certs/{{ groups['cloudera_manager'][0] }}",
-    "cmHostKey" : "~/certs/{{ groups['cloudera_manager'][0] }}",
+    "cmHostCert" : "~/certs/{{ groups['cloudera_manager'][0] }}.crt",
+    "cmHostKey" : "~/certs/{{ groups['cloudera_manager'][0] }}.key",
     "caCert" : "~/certs/rootca.crt",
     "keystorePasswd" : "~/certs/key.pwd",
     "truststorePasswd" : "~/certs/truststore.pwd",
