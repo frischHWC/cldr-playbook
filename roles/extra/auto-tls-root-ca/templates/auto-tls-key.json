@@ -7,17 +7,17 @@
     "privateKey": "{{ node_key_one_line }}",
 
     "interpretAsFilenames" : true,
-    "cmHostCert" : "~/certs/{{ groups['cloudera_manager'][0] }}.crt",
-    "cmHostKey" : "~/certs/{{ groups['cloudera_manager'][0] }}.key",
-    "caCert" : "~/certs/rootca.crt",
-    "keystorePasswd" : "~/certs/key.pwd",
-    "truststorePasswd" : "~/certs/truststore.pwd",
+    "cmHostCert" : "/root/certs/{{ groups['cloudera_manager'][0] }}.crt",
+    "cmHostKey" : "/root/certs/{{ groups['cloudera_manager'][0] }}.key",
+    "caCert" : "/root/certs/rootca.crt",
+    "keystorePasswd" : "/root/certs/key.pwd",
+    "truststorePasswd" : "/root/certs/truststore.pwd",
     "hostCerts" : [ 
         {% for machine in groups['all'] %}
         {
             "hostname" : "{{ machine }}",
-            "certificate" : "~/certs/{{ machine }}.crt",
-            "key" : "~/certs/{{ machine }}.key"
+            "certificate" : "/root/certs/{{ machine }}.crt",
+            "key" : "/root/certs/{{ machine }}.key"
         }{% if not loop.last %},{% endif %}
         {% endfor %}
     ]
