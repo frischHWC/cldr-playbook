@@ -1,4 +1,13 @@
 ---
+- name: Chown all certs for cloudera-scm user to allow certmanager to use it 
+  ansible.builtin.file:
+    path: /tmp/certs
+    state: directory
+    recurse: yes
+    owner: cloudera-scm
+    group: cloudera-scm
+
+
 - name: Check if password or key is used to connect to machines
   set_fact:
     use_password: "{{ true if node_password is defined and node_password|length > 0 else false }}"
