@@ -9,7 +9,7 @@
     "interpretAsFilenames" : true,
     "cmHostCert" : "/tmp/certs/{{ groups['cloudera_manager'][0] }}.crt",
     "cmHostKey" : "/tmp/certs/{{ groups['cloudera_manager'][0] }}.key",
-    "caCert" : "/tmp/certs/tmpca.crt",
+    "caCert" : "/tmp/certs/rootca.crt",
     "keystorePasswd" : "/tmp/certs/key.pwd",
     "truststorePasswd" : "/tmp/certs/truststore.pwd",
     "hostCerts" : [ 
