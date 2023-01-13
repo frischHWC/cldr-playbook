@@ -97,8 +97,8 @@
     - role: cloudera_manager/agent_config_pvc
       when: pvc_type == "ECS"
 
-- name: Create a dns and dns-entry for ECS
-  hosts: cloudera_manager
+- name: Create a dns and dns-entry for ECS on all PvC servers 
+  hosts: pvc_hosts
   become: yes
   roles:
     - role: prereqs/pvc_ecs_dns
@@ -108,7 +108,7 @@
     - network
 
 - name: Apply specific pre-requisites for ECS
-  hosts: all
+  hosts: pvc_hosts
   become: yes
   roles:
     - role: prereqs/pvc_ecs

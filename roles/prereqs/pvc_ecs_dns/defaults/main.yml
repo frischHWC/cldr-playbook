@@ -13,16 +13,4 @@
 # limitations under the License.
 
 ---
-- name: Enable Auto-TLS 
-  hosts: cloudera_manager
-  gather_facts: no
-  roles:
-    - { role: extra/patch-auto-tls, when: "cloudera_manager_version is version('7.3.0','<')" }
-    - { role: extra/auto-tls, when: not use_root_ca }
-    - { role: extra/auto-tls-root-ca, when: use_root_ca }
-    - operations/restart_cm
-    - operations/restart_agents
-  tags:
-    - security
-    - autotls
-
+setup_dns_ecs: true
