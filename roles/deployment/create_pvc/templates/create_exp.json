@@ -118,6 +118,18 @@
                 "value": "{{ longhorn_replication }}",
                 "sensitive": false
               }
+              {% if use_root_ca %},
+              {
+                "name": "ssl_certificate",
+                "value": "{{ pvc_ssl_cert }}",
+                "sensitive": false
+              },
+              {
+                "name": "ssl_private_key",
+                "value": "{{ pvc_ssl_key }}",
+                "sensitive": false
+              }
+              {% endif %}
             ]
           },
           "displayName": "ECS"

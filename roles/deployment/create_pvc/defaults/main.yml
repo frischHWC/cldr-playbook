@@ -9,3 +9,5 @@ nfs_provisioned: 100
 ecs_longhorn_storage: /ecs/longhorn-storage
 ecs_local_storage: /ecs/local-storage
 
+use_root_ca: false
+
