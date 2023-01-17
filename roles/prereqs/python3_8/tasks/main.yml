@@ -102,7 +102,7 @@
 - name: Unarchive Python tar.gz
   unarchive:
     src: /opt/python-3_8.tgz
-    dest: /opt/python-3_8/
+    dest: /opt/
   when: install_python3_8 == true
 
 - name: Configure & Install Python 3.8 
