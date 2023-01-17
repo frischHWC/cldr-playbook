@@ -14,3 +14,10 @@
 
 ---
 packages_to_install_for_python_3_8:
+  - gcc
+  - make
+  - build-essential
+  - zlib1g-dev
+  - libssl-dev
+  - libffi-dev
+  - libbz2-dev
