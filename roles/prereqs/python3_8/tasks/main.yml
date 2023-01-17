@@ -96,12 +96,12 @@
 - name: Download Python 3.8 package
   get_url:
     url: "{{ python_3_8_url }}"
-    dest: /opt/python-3_8.tgz
+    dest: /opt/Python-3.8.12.tgz
   when: install_python3_8 == true
 
 - name: Unarchive Python tar.gz
   unarchive:
-    src: /opt/python-3_8.tgz
+    src: /opt/Python-3.8.12.tgz
     dest: /opt/
   when: install_python3_8 == true
 
@@ -111,7 +111,7 @@
     make
     make install
   args:
-    chdir: /opt/python-3_8/
+    chdir: /opt/Python-3.8.12/
   when: install_python3_8 == true
 
 - name: Copy shared compiled lib files
@@ -119,7 +119,7 @@
     src: "{{ item }}"
     dest: /lib64/
   with_fileglob:
-    - "/opt/python-3_8/libpython3.8.so*"
+    - "/opt/Python-3.8.12/libpython3.8.so*"
   when: install_python3_8 == true
 
 - name: Modify rights to be executable
