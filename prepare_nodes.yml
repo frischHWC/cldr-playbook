@@ -60,3 +60,11 @@
     - prereqs/jdk
   tags:
     - jdk
+
+- name: Install Python 3 if needed
+  hosts: cloudera_manager, cluster
+  become: yes
+  roles:
+    - prereqs/python3_8
+  tags:
+    - python
