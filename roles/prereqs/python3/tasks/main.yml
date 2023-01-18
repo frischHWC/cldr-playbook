@@ -16,13 +16,7 @@
 
 - name: Include variables
   include_vars:
-    file: "{{ ansible_os_family }}.yml"
-  when: ansible_os_family != "Debian"
-
-- name: Include variables
-  include_vars:
-    file: "{{ ansible_distribution }}{{ ansible_distribution_major_version }}.yml"
-  when: ansible_os_family == "Debian"
+    file: "{{ ansible_os_family }}{{ ansible_distribution_major_version }}.yml"
 
 - set_fact:
     install_python3_8: "true"
@@ -155,18 +149,18 @@
     gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$OS_RELEASE_MAJOR
     priority=1
     EOF
-  when: install_python3_8 == true and ansible_os_family == "RedHat" and set_centos_extra_repo == true
+  when: database_type == 'postgresql' and install_python3_8 == true and ansible_os_family == "RedHat" and set_centos_extra_repo == true
 
 - name: Install Required packages for Psycopg2 with Python 3.8 
   package:
     name: "{{ item }}"
     state: present
   with_items: "{{ packages_for_psycopg2_3_8 }}"
-  when: install_python3_8 == true
+  when: database_type == 'postgresql' and install_python3_8 == true
 
 - name: Install psycopg2 2.9.3
   shell: |
-    export PATH=/opt/rh/rh-postgresql{{ postgres_version }}/root/usr/bin:$PATH
-    pip3.8 install psycopg2==2.9.3
-  when: install_python3_8 == true
+    "export PATH=$PATH:{{ postgresql_install_path }}"
+    pip3.8 install psycopg2==2.9.3 --ignore-installed
+  when: database_type == 'postgresql' and install_python3_8 == true
   

@@ -28,3 +28,5 @@ packages_for_psycopg2_3_8:
  - xmlsec1  
  - xmlsec1-openssl
  - "rh-postgresql{{ postgres_version }}-postgresql-devel"
+
+postgresql_install_path: "/opt/rh/rh-postgresql{{ postgres_version }}/root/usr/bin"
