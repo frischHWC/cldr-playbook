@@ -160,7 +160,8 @@
 
 - name: Install psycopg2 2.9.3
   shell: |
-    "export PATH=$PATH:{{ postgresql_install_path }}"
     pip3.8 install psycopg2==2.9.3 --ignore-installed
+  environment:
+    PATH: "{{ postgresql_install_path }}:{{ ansible_env.PATH }}"
   when: database_type == 'postgresql' and install_python3_8 == true
   
