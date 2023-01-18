@@ -65,6 +65,6 @@
   hosts: cloudera_manager, cluster
   become: yes
   roles:
-    - prereqs/python3_8
+    - prereqs/python3
   tags:
     - python

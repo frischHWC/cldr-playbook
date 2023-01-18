@@ -57,7 +57,7 @@
   ignore_errors: true
   when: install_python3_8 == true and ansible_os_family != "Suse"
 
-
+# Openssl setup for Suse
 - name: Download Openssl package for Suse distribution
   get_url:
     url: "{{ openssl_url }}"
@@ -92,7 +92,7 @@
     state: absent
   when: install_python3_8 == true and ansible_os_family == "Suse"
 
-
+# Install python 3.8
 - name: Download Python 3.8 package
   get_url:
     url: "{{ python_3_8_url }}"
@@ -137,3 +137,36 @@
     state: absent
   with_items: "{{ openssl_lib_files }}"
   when: install_python3_8 == true and ansible_os_family == "Suse"
+
+
+# Setup psycopg2 for python 3.8 for Hue
+- name: Add OS extra repos
+  shell: |
+    OS_RELEASE=$(rpm -q --qf "%{VERSION}" $(rpm -q --whatprovides redhat-release))
+    OS_RELEASE_MAJOR=$(echo $OS_RELEASE | cut -d. -f1)
+    cat << EOF | sudo tee /etc/yum.repos.d/centos-extras.repo
+    #additional packages that may be useful
+    [extras]
+    name=CentOS-$OS_RELEASE_MAJOR - Extras
+    mirrorlist=http://mirrorlist.centos.org/?release=$OS_RELEASE_MAJOR&arch=\$basearch&repo=extras
+    #baseurl=http://mirror.centos.org/centos/$OS_RELEASE_MAJOR/extras/\$basearch/
+    enabled=1
+    gpgcheck=1
+    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$OS_RELEASE_MAJOR
+    priority=1
+    EOF
+  when: install_python3_8 == true and ansible_os_family == "RedHat" and set_centos_extra_repo == true
+
+- name: Install Required packages for Psycopg2 with Python 3.8 
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages_for_psycopg2_3_8 }}"
+  when: install_python3_8 == true
+
+- name: Install psycopg2 2.9.3
+  shell: |
+    export PATH=/opt/rh/rh-postgresql{{ postgres_version }}/root/usr/bin:$PATH
+    pip3.8 install psycopg2==2.9.3
+  when: install_python3_8 == true
+  
