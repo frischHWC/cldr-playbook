@@ -17,3 +17,6 @@ install_python3: false
 install_python3_8: false
 python_3_8_url: https://www.python.org/ftp/python/3.8.12/Python-3.8.12.tgz
 openssl_url: https://www.openssl.org/source/openssl-1.0.2o.tar.gz
+set_ld_library_path: false
+set_centos_extra_repo: false
+postgres_version: 10

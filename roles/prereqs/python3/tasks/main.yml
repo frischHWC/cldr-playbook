@@ -164,4 +164,11 @@
   environment:
     PATH: "{{ postgresql_install_path }}:{{ ansible_env.PATH }}"
   when: database_type == 'postgresql' and install_python3_8 == true
-  
+
+
+- name: Insert LD_LIBRARY_PATH var to bashrc
+  blockinfile:
+    path: ~/.bashrc
+    block: |
+      "export LD_LIBRARY_PATH=/opt/rh/rh-postgresql{{ postgres_version }}/root/usr/lib64:$LD_LIBRARY_PATH"
+  when: database_type == 'postgresql' and install_python3_8 == true and set_ld_library_path == true
