@@ -1,0 +1,166 @@
+# Copyright 2021 Cloudera, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+---
+
+- name: Include variables
+  include_vars:
+    file: "{{ ansible_os_family }}{{ ansible_distribution_major_version }}.yml"
+
+- set_fact:
+    install_python3_8: "true"
+  when: cloudera_cdh_version is version('7.1.8','>=')
+
+- name: Install python 3
+  package:
+    name: python3
+    state: present
+  when: install_python3 == true and install_python3_8 == false
+
+- name: Install pip3
+  package:
+    name: python3-pip
+    state: present
+  when: install_python3 == true and install_python3_8 == false
+
+
+# In case of 7.1.8 or above, make a custom installation of python 3.8 to be able to use Hue
+
+- name: Install Required packages for Python 3.8 installation 
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages_to_install_for_python_3_8 }}"
+  when: install_python3_8 == true
+
+- name: Install openssl package (can fail)
+  package:
+    name: openssl-devel
+    state: present
+  ignore_errors: true
+  when: install_python3_8 == true and ansible_os_family != "Suse"
+
+# Openssl setup for Suse
+- name: Download Openssl package for Suse distribution
+  get_url:
+    url: "{{ openssl_url }}"
+    dest: /opt/openssl-1.0.2o.tar.gz
+  when: install_python3_8 == true and ansible_os_family == "Suse"
+
+- name: Unarchive Openssl tar.gz for Suse distribution
+  unarchive:
+    src: /opt/openssl-1.0.2o.tar.gz
+    dest: /opt/openssl-1.0.2o/
+  when: install_python3_8 == true and ansible_os_family == "Suse"
+
+- name: Configure & Install Openssl for Suse distribution
+  shell: |
+    ./configure --enable-shared
+    make
+    make install
+  args:
+    chdir: /opt/openssl-1.0.2o/
+  when: install_python3_8 == true and ansible_os_family == "Suse"
+
+- name: Copy openssl compiled lib files for Suse distribution
+  copy:
+    src: "{{ item }}"
+    dest: /lib/
+  with_items: "{{ openssl_lib_files }}"
+  when: install_python3_8 == true and ansible_os_family == "Suse"
+
+- name: Delete openssl tar gz for Suse distribution
+  file:
+    path: /opt/openssl-1.0.2o.tar.gz
+    state: absent
+  when: install_python3_8 == true and ansible_os_family == "Suse"
+
+# Install python 3.8
+- name: Download Python 3.8 package
+  get_url:
+    url: "{{ python_3_8_url }}"
+    dest: /opt/Python-3.8.12.tgz
+  when: install_python3_8 == true
+
+- name: Unarchive Python tar.gz
+  unarchive:
+    src: /opt/Python-3.8.12.tgz
+    dest: /opt/
+  when: install_python3_8 == true
+
+- name: Configure & Install Python 3.8 
+  shell: |
+    ./configure --enable-shared
+    make
+    make install
+  args:
+    chdir: /opt/Python-3.8.12/
+  when: install_python3_8 == true
+
+- name: Copy shared compiled lib files
+  copy:
+    src: "{{ item }}"
+    dest: /lib64/
+  with_fileglob:
+    - "/opt/Python-3.8.12/libpython3.8.so*"
+  when: install_python3_8 == true
+
+- name: Modify rights to be executable
+  file:
+    path: "{{ item }}" 
+    mode: '0755'
+  with_fileglob:
+    - "/lib64/libpython3.8.so*"
+  when: install_python3_8 == true
+
+
+- name: Delete openssl compiled lib files for Suse distribution
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items: "{{ openssl_lib_files }}"
+  when: install_python3_8 == true and ansible_os_family == "Suse"
+
+
+# Setup psycopg2 for python 3.8 for Hue
+- name: Add OS extra repos
+  shell: |
+    OS_RELEASE=$(rpm -q --qf "%{VERSION}" $(rpm -q --whatprovides redhat-release))
+    OS_RELEASE_MAJOR=$(echo $OS_RELEASE | cut -d. -f1)
+    cat << EOF | sudo tee /etc/yum.repos.d/centos-extras.repo
+    #additional packages that may be useful
+    [extras]
+    name=CentOS-$OS_RELEASE_MAJOR - Extras
+    mirrorlist=http://mirrorlist.centos.org/?release=$OS_RELEASE_MAJOR&arch=\$basearch&repo=extras
+    #baseurl=http://mirror.centos.org/centos/$OS_RELEASE_MAJOR/extras/\$basearch/
+    enabled=1
+    gpgcheck=1
+    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$OS_RELEASE_MAJOR
+    priority=1
+    EOF
+  when: database_type == 'postgresql' and install_python3_8 == true and ansible_os_family == "RedHat" and set_centos_extra_repo == true
+
+- name: Install Required packages for Psycopg2 with Python 3.8 
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages_for_psycopg2_3_8 }}"
+  when: database_type == 'postgresql' and install_python3_8 == true
+
+- name: Install psycopg2 2.9.3
+  shell: |
+    /usr/local/bin/pip3.8 install psycopg2==2.9.3 --ignore-installed
+  environment:
+    PATH: "{{ postgresql_install_path }}:{{ ansible_env.PATH }}"
+  when: database_type == 'postgresql' and install_python3_8 == true

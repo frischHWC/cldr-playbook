@@ -109,18 +109,3 @@
     enabled: yes
     masked: no
   ignore_errors: true
-
-# TODO: In case of 7.1.8 or above, make a custom installationof python 3.8
-- name: Install python 3
-  package:
-    name: python3
-    state: present
-  when: install_python3 == true
-
-- name: Install pip3
-  package:
-    name: python3-pip
-    state: present
-  when: install_python3 == true
-  
-

@@ -67,6 +67,19 @@
   notify:
     - restart cloudera-scm-agent
 
+- name: Copy shared lib for Hue with Python 3.8 to CM Agent lib dir
+  copy:
+    src: "{{ item }}"
+    dest: /opt/cloudera/cm-agent/lib/
+    remote_src: true
+    owner: cloudera-scm
+    group: cloudera-scm
+    mode: '1755'
+  with_fileglob:
+    - "/opt/rh/rh-postgresql10/root/usr/lib64/libpq*"
+  when: cloudera_cdh_version is version('7.1.8','>=') and database_type == 'postgresql'
+  ignore_errors: true
+
 - name: Restart Cloudera Manager agent if required
   meta: flush_handlers
 
