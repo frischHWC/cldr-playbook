@@ -13,7 +13,6 @@
 # limitations under the License.
 
 ---
-set_ld_library_path: true
 set_centos_extra_repo: true
 postgres_version: 10
 

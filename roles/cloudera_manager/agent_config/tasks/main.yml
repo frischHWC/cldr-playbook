@@ -74,6 +74,7 @@
     remote_src: true
     owner: cloudera-scm
     group: cloudera-scm
+    mode: '1755'
   with_fileglob:
     - "/opt/rh/rh-postgresql10/root/usr/lib64/libpq*"
   when: cloudera_cdh_version is version('7.1.8','>=') and database_type == 'postgresql'
