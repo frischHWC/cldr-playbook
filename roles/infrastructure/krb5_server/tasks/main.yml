@@ -45,8 +45,10 @@
 
 - name: Start Kerberos KDC
   service:
-    name: "{{ item }}"
+    name: "{{ krb5_service }}"
     state: restarted
     enabled: yes
   with_items:
     - "{{ krb5_services }}"
+  loop_control:
+    loop_var: krb5_service
