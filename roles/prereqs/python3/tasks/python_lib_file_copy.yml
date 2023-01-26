@@ -14,19 +14,18 @@
 
 ---
 
-- name: Include database type specific variables
-  include_vars:
-    file: "{{ database_type }}.yml"
+- name: Copy shared compiled lib files
+  copy:
+    src: "{{ item }}"
+    dest: /lib64/
+    remote_src: true
+  with_fileglob:
+    - "/opt/Python-3.8.12/libpython3.8.so*"
 
-- name: Include database type and OS specific variables
-  include_vars:
-    file: "{{ database_type }}-{{ ansible_os_family }}.yml"
-
-- name: Install database
-  include_tasks:
-    file: "{{ db_params_file }}"
-  with_first_found:
-    - "{{ database_type }}-{{ ansible_os_family }}.yml"
-    - "{{ database_type }}.yml"
-  loop_control:
-    loop_var: db_params_file
+- name: Modify rights to be executable
+  file:
+    path: "{{ item }}" 
+    mode: '0755'
+    remote_src: true
+  with_fileglob:
+    - "/lib64/libpython3.8.so*"

@@ -14,19 +14,14 @@
 
 ---
 
-- name: Include database type specific variables
-  include_vars:
-    file: "{{ database_type }}.yml"
-
-- name: Include database type and OS specific variables
-  include_vars:
-    file: "{{ database_type }}-{{ ansible_os_family }}.yml"
-
-- name: Install database
-  include_tasks:
-    file: "{{ db_params_file }}"
-  with_first_found:
-    - "{{ database_type }}-{{ ansible_os_family }}.yml"
-    - "{{ database_type }}.yml"
-  loop_control:
-    loop_var: db_params_file
+- name: Copy shared lib for Hue with Python 3.8 to CM Agent lib dir
+  copy:
+    src: "{{ item }}"
+    dest: /opt/cloudera/cm-agent/lib/
+    remote_src: true
+    owner: cloudera-scm
+    group: cloudera-scm
+    mode: '1755'
+  with_fileglob:
+    - "/opt/rh/rh-postgresql10/root/usr/lib64/libpq*"
+  ignore_errors: true

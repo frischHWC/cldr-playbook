@@ -107,22 +107,9 @@
     make install
   when: install_python3_8 == true
 
-- name: Copy shared compiled lib files
-  copy:
-    src: "{{ item }}"
-    dest: /lib64/
-  with_fileglob:
-    - "/opt/Python-3.8.12/libpython3.8.so*"
+- name: Copy python lib files
+  include_tasks: python_lib_file_copy.yml
   when: install_python3_8 == true
-
-- name: Modify rights to be executable
-  file:
-    path: "{{ item }}" 
-    mode: '0755'
-  with_fileglob:
-    - "/lib64/libpython3.8.so*"
-  when: install_python3_8 == true
-
 
 - name: Delete openssl compiled lib files for Suse distribution
   file:
