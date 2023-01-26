@@ -101,11 +101,10 @@
 
 - name: Configure & Install Python 3.8 
   shell: |
+    cd /opt/Python-3.8.12/
     ./configure --enable-shared
     make
     make install
-  args:
-    chdir: /opt/Python-3.8.12/
   when: install_python3_8 == true
 
 - name: Copy shared compiled lib files
