@@ -24,9 +24,9 @@
 
 - name: Install database
   include_tasks:
-    file: "{{ item }}"
+    file: "{{ db_params_file }}"
   with_first_found:
     - "{{ database_type }}-{{ ansible_os_family }}.yml"
     - "{{ database_type }}.yml"
   loop_control:
-    loop_var: krb5_service
+    loop_var: db_params_file
