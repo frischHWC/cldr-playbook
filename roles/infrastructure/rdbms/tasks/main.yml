@@ -21,6 +21,12 @@
 - name: Include database type and OS specific variables
   include_vars:
     file: "{{ database_type }}-{{ ansible_os_family }}.yml"
+  with_first_found:
+    - "{{ database_type }}-{{ ansible_os_family }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+    - "{{ database_type }}-{{ ansible_os_family }}.yml"
+    - "{{ database_type }}.yml"
+  loop_control:
+    loop_var: db_params_file
 
 - name: Install database
   include_tasks:
