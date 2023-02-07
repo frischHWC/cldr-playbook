@@ -28,6 +28,15 @@
   loop_control:
     loop_var: db_params_file
 
+- name: disable default Postgres module in Rhel 8
+  command: dnf module disable -y postgresql
+  register: __postgres_module_result
+  changed_when:
+    - '"Disabling modules" in __postgres_module_result.stdout'
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version | int >= 8
+
 - name: Install database
   include_tasks:
     file: "{{ db_params_file }}"
