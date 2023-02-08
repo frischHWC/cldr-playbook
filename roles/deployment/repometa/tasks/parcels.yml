@@ -37,7 +37,7 @@
     products: >
       {{ manifests.results
       | map(attribute='content')
-      | map(attribute='json')
+      | map('from_json')
       | list
       | extract_products_from_manifests
       | dict2items(key_name='product', value_name='version')
