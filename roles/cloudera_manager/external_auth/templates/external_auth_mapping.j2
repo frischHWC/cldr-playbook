@@ -1,2 +1,2 @@
 {% import 'cm_api.j2' as cm_api with context %}
-{{ cm_api.ApiExternalUserMappingList(cloudera_manager_external_auth.type | default('LDAP'), [role_mapping]) }}
+{{ cm_api.ApiExternalUserMappingList(cloudera_manager_external_auth.type | default('LDAP'), [role_mapping]) | string | to_json | from_json | regex_replace('True', 'true') | regex_replace('False', 'false') | regex_replace('\'', '"') | b64encode }}
