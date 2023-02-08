@@ -33,6 +33,7 @@
   set_fact:
     products: >
       {{ manifests.results
+      | map(attribute='content')
       | map(attribute='json')
       | list
       | extract_products_from_manifests
