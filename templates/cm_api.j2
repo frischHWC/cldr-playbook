@@ -82,7 +82,7 @@
   {%- for user_mapping in auth_user_mappings -%}
     {{ external_user_mapping_list["items"].append(ApiExternalUserMapping(auth_type, user_mapping) | from_json) }}
   {%- endfor -%}
-  {{ external_user_mapping_list | string | to_json | from_json | regex_replace('True', 'true') | regex_replace('False', 'false') | regex_replace('\'', '"') | b64encode }}
+  {{ external_user_mapping_list | to_json }}
 {%- endmacro %}
 
 {% macro ApiAuthRoleRef(name) -%}
