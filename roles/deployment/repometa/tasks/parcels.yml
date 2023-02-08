@@ -28,8 +28,9 @@
     loop_var: repository
   check_mode: no
 
-- debug: Debug answer
-  msg: "{{ manifests.results }}"
+- name: DEBUG - manifests answer
+  debug:  
+    msg: "{{ manifests.results }}"
   when: debug | default(False)
 
 - name: Extract product details from parcel manifests
