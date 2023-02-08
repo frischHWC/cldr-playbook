@@ -21,6 +21,7 @@
     return_content: yes
     url_username: "{{ parcel_repo_username | default(omit) }}"
     url_password: "{{ parcel_repo_password | default(omit) }}"
+    body_format: json
   run_once: true
   register: manifests
   loop: "{{ repositories }}"
@@ -32,6 +33,7 @@
   set_fact:
     products: >
       {{ manifests.results
+      | map(attribute='content')
       | map(attribute='json')
       | list
       | extract_products_from_manifests
