@@ -26,7 +26,6 @@
     dest: "/usr/share/java/postgresql-connector-java.jar"
     mode: 0644
     validate_certs: no
-  become: no
 
 # SSB will need the python3-psycopg2 connector
 
