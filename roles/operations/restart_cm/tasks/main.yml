@@ -3,6 +3,7 @@
   service:
       name: cloudera-scm-server
       state: restarted
+  become: yes
 
 - name: wait cloudera-scm-server
   wait_for:

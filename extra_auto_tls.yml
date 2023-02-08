@@ -20,15 +20,6 @@
     - { role: extra/patch-auto-tls, when: "cloudera_manager_version is version('7.3.0','<')" }
     - { role: extra/auto-tls, when: not use_root_ca }
     - { role: extra/auto-tls-root-ca, when: use_root_ca }
-  tags:
-    - security
-    - autotls
-
-- name: Restart CM & Agents
-  hosts: cloudera_manager
-  gather_facts: no
-  become: yes
-  roles:
     - operations/restart_cm
     - operations/restart_agents
   tags:
