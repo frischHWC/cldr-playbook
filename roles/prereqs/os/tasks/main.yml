@@ -47,6 +47,7 @@
     enabled: no
   when: "item + '.service' in ansible_facts.services"
   with_items: "{{ unnecessary_services }}"
+  ignore_errors: true
 
 - name: Install DNS utils package
   package:
