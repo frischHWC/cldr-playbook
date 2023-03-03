@@ -13,15 +13,15 @@
 # limitations under the License.
 
 ---
-- name: Enable Auto-TLS 
-  hosts: cloudera_manager
-  gather_facts: no
-  roles:
-    - { role: extra/patch-auto-tls, when: "cloudera_manager_version is version('7.3.0','<')" }
-    - { role: extra/auto-tls, when: not use_root_ca }
-    - { role: extra/auto-tls-root-ca, when: use_root_ca }
-    - operations/restart_cm
-    - operations/restart_agents
-  tags:
-    - security
-    - autotls
+postgresql_version: "{{ database_version }}"
+postgresql_data_dir: /var/lib/pgsql/{{ postgresql_version }}/data
+postgresql_bin_path: /usr/pgsql-{{ postgresql_version }}/bin
+postgresql_config_path: /var/lib/pgsql/{{ postgresql_version }}/data
+postgresql_daemon: postgresql-{{ postgresql_version }}.service
+postgresql_packages:
+  - postgresql
+  - postgresql-server
+  - postgresql-libs
+  - postgresql-contrib
+  - postgresql-devel
+postgresql_python_library: python3-psycopg2
