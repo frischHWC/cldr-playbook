@@ -102,6 +102,31 @@ Services:
         # username:
         # password:
 
+  cdpcadence:
+    Config:
+      database:
+        name: db-cadence
+        ## The following overrides are optional.
+        ## When .Database.Mode is set to existing, the values will be taken from .Services.common.Config.database if left unspecified.
+        ## When .Database.Mode is set to embedded, the following values are ignored.
+
+        # host:
+        # port:
+        # username:
+        # password:
+  cdpcadencevisibility:
+    Config:
+      database:
+        name: db-cadence-visibility
+        ## The following overrides are optional.
+        ## When .Database.Mode is set to existing, the values will be taken from .Services.common.Config.database if left unspecified.
+        ## When .Database.Mode is set to embedded, the following values are ignored.
+
+        # host:
+        # port:
+        # username:
+        # password:
+
   thunderheadusermanagementprivate:
     Config:
       database:
