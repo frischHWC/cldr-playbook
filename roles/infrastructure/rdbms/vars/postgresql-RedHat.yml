@@ -25,3 +25,4 @@ postgresql_packages:
   - postgresql{{ postgresql_version | regex_replace('\.','') }}-contrib
   - postgresql{{ postgresql_version | regex_replace('\.','') }}-devel
 postgresql_python_library: python-psycopg2
+
