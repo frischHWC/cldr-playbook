@@ -63,7 +63,7 @@
 
 - name: Install MySQL Connector
   hosts: cloudera_manager, cluster
-  gather_facts: no
+  gather_facts: yes
   become: yes
   roles:
     - role: prereqs/mysql_connector
@@ -75,7 +75,7 @@
 
 - name: Install Oracle Connector
   hosts: cloudera_manager, cluster
-  gather_facts: no
+  gather_facts: yes
   become: yes
   roles:
     - role: prereqs/oracle_connector
@@ -85,7 +85,7 @@
 
 - name: Install Postgres Connector
   hosts: cloudera_manager, cluster
-  gather_facts: no
+  gather_facts: yes
   become: yes
   roles:
     - role: prereqs/psql_connector
