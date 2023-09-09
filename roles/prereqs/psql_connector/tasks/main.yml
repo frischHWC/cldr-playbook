@@ -37,5 +37,5 @@
   when: install_python3 == true
 
 - name: Install python3-psycopg2
-  shell: "pip3 install psycopg2-binary==2.8.5 -t /usr/share/python3"
+  shell: "/usr/local/bin/pip3 install psycopg2-binary==2.8.5 -t /usr/share/python3"
   when: install_python3 == true
