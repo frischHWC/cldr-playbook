@@ -99,9 +99,9 @@
     body: "{{ lookup('template', 'smm.json') }}"
     method: PUT
   register: response_smm
-  when: smm_service_name != ''
+  when: smm_service_name != '' and cloudera_cdh_version is version('7.1.9','>=')
 
 - name: debug smm
   debug:
     var: response_smm
-  when: debug | default(false) and smm_service_name != ''
+  when: debug | default(false) and smm_service_name != '' and cloudera_cdh_version is version('7.1.9','>=')
