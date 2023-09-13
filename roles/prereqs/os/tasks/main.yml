@@ -110,3 +110,10 @@
     enabled: yes
     masked: no
   ignore_errors: true
+
+- name: Install openssl11-libs package (can fail)
+  package:
+    name: openssl11-libs
+    state: present
+  ignore_errors: true
+  when: install_python3_8 == true and ansible_os_family != "Suse"
