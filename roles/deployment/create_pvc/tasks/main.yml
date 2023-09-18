@@ -97,7 +97,7 @@
   cm_api:
     endpoint: /clusters 
     method: POST
-    body: "{{ lookup('template', 'create_exp.json') }}"
+    body: "{{ lookup('template', 'create_exp_719.json') }}"
     timeout: "{{ cluster_restart_timeout | default(3000) }}"
   when: cloudera_cdh_version is version('7.1.9','>=')
 
