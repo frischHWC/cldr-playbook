@@ -1,5 +1,5 @@
---- gen.orig	2023-09-19 00:17:14.950431672 -0700
-+++ gen.patched	2023-09-19 02:39:21.182151958 -0700
+--- gen.orig	2023-09-19 02:41:24.023592604 -0700
++++ gen.patched	2023-09-19 03:42:48.196793859 -0700
 @@ -39,6 +39,8 @@
  # principal name and host.
  PRINC=${PRINCIPAL%%/*}
@@ -27,10 +27,10 @@
    PRINC_EXISTS=no
    echo "Adding new principal: $PRINCIPAL"
 -  ipa service-add $PRINCIPAL --force
-+  if [[ $SERVICE_AND_HOST =~ \. ]]; then
++  if [[ $SERVICE_AND_HOST == "${SERVICE_NAME}/${HOST}" ]]; then
 +    ipa service-add $PRINCIPAL --force
 +  else
-+    ipa service-add $SERVICE_AND_HOST.{{ cluster_name }} --force
++    echo "WARNING: This service does not contain a hostname, so it will not be created"
 +  fi
  fi
  
