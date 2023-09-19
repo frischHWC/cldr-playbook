@@ -16,7 +16,7 @@
 
 - name: Template Patch to CM  host
   template:
-    src: gen_ipa.p
+    src: gen.p
     dest: /tmp/gen_credentials_ipa.p
 
 - name: Apply patch remotely

@@ -7,11 +7,11 @@
 -  ipa host-add $HOST --force --no-reverse
 +  if [[ $HOST =~ \. ]]; then
 +    ipa host-add $HOST --force --no-reverse
-+  else
++  else 
 +    ipa host-add $HOST.{{ cluster_name }}  --force --no-reverse
 +  fi
  fi
-
+ 
  set +e
 @@ -62,7 +66,11 @@
  else
@@ -24,11 +24,11 @@
 +    ipa service-add $PRINCIPAL.{{ cluster_name }} --force
 +  fi
  fi
-
+ 
  # Set the maxrenewlife for the principal, if given. There is no interface
 @@ -110,4 +118,4 @@
  fi
-
+ 
  kdestroy
 -exit 0
 \ No newline at end of file
