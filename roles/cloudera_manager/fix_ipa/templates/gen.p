@@ -1,5 +1,5 @@
---- gen.orig	2023-09-19 02:41:24.023592604 -0700
-+++ gen.patched	2023-09-19 03:42:48.196793859 -0700
+--- gen.orig	2023-09-19 07:25:50.825622226 -0700
++++ gen.patched	2023-09-19 07:34:56.321868471 -0700
 @@ -39,6 +39,8 @@
  # principal name and host.
  PRINC=${PRINCIPAL%%/*}
@@ -27,15 +27,28 @@
    PRINC_EXISTS=no
    echo "Adding new principal: $PRINCIPAL"
 -  ipa service-add $PRINCIPAL --force
-+  if [[ $SERVICE_AND_HOST == "${SERVICE_NAME}/${HOST}" ]]; then
++  if [[ $HOST =~ \. ]]; then
 +    ipa service-add $PRINCIPAL --force
 +  else
-+    echo "WARNING: This service does not contain a hostname, so it will not be created"
++    ipa service-add ${SERVICE_NAME}/${HOST}.{{ cluster_name }} --force
 +  fi
  fi
  
  # Set the maxrenewlife for the principal, if given. There is no interface
-@@ -110,4 +120,4 @@
+@@ -96,7 +106,11 @@
+     "\tipa service-allow-retrieve-keytab HTTP/${IPA_HOST}@REALM  --users=${CMF_PRINCIPAL}"
+   ipa-getkeytab -r --principal=$PRINCIPAL --keytab=$KEYTAB_PATH
+ else
+-  ipa-getkeytab --principal=$PRINCIPAL --keytab=$KEYTAB_PATH
++  if [[ $HOST =~ \. ]]; then
++    ipa-getkeytab --principal=$PRINCIPAL --keytab=$KEYTAB_PATH
++  else
++    ipa-getkeytab --principal=${SERVICE_NAME}/${HOST}.{{ cluster_name }} --keytab=$KEYTAB_PATH
++  fi
+ fi
+ 
+ if [ ! -e $KEYTAB_PATH ] ; then
+@@ -110,4 +124,4 @@
  fi
  
  kdestroy
