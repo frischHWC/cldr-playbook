@@ -49,3 +49,9 @@
 - name: Rebuild GRUB
   shell: grub2-mkconfig -o /boot/grub2/grub.cfg
   ignore_errors: yes
+
+- name: Install Development Tools
+  yum:
+    name: "@Development tools"
+    state: present
+  when: ansible_distribution_major_version >= 8
