@@ -54,4 +54,5 @@
   yum:
     name: "@Development tools"
     state: present
-  when: ansible_distribution_major_version >= 8
+  ignore_errors: yes
+
