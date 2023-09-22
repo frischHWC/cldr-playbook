@@ -110,7 +110,7 @@ local_accounts:
     keystore_acl: True
 
   - user: kudu
-    home: /kudu
+    home: /var/lib/kudu
     comment: Kudu
     key_acl: True
     key_password_acl: True

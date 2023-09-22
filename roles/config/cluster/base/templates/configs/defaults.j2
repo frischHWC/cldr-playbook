@@ -13,11 +13,11 @@ KAFKA:
     log.dirs: /var/local/kafka/data
 KUDU:
   KUDU_MASTER:
-    fs_data_dirs: /kudu/master/data
-    fs_wal_dir: /kudu/master/wal
+    fs_data_dirs: /var/lib/kudu/master/data
+    fs_wal_dir: /var/lib//master/wal
   KUDU_TSERVER:
-    fs_data_dirs: /kudu/tablet/data
-    fs_wal_dir: /kudu/tablet/wal
+    fs_data_dirs: /var/lib/kudu/tablet/data
+    fs_wal_dir: /var/lib/kudu/tablet/wal
 YARN:
   NODEMANAGER:
     yarn_nodemanager_local_dirs: /yarn/nm
