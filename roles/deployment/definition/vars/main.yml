@@ -121,3 +121,10 @@ database_defaults:
     name: sentry
     user: sentry
     password: "{{ database_default_password }}"
+  QUEUEMANAGER:
+    host: "{{ database_host }}"
+    port: "{{ database_type | default_database_port }}"
+    type: "{{ database_type }}"
+    name: queue_manager
+    user: queue_manager
+    password: "{{ database_default_password }}"

@@ -1,0 +1,10 @@
+---
+QUEUEMANAGER:
+  SERVICEWIDE:
+    queuemanager_database_type: {{ databases.QUEUEMANAGER.type | format_database_type }}
+    queuemanager_database_name: {{ databases.QUEUEMANAGER.name }}
+    queuemanager_database_host: {{ databases.QUEUEMANAGER.host }}
+    queuemanager_database_port: {{ databases.QUEUEMANAGER.port }}
+    queuemanager_database_user: {{ databases.QUEUEMANAGER.user }}
+    queuemanager_database_password: {{ databases.QUEUEMANAGER.password }}
+
