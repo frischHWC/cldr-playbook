@@ -15,3 +15,4 @@
 ---
 psql_connector_url: https://jdbc.postgresql.org/download/postgresql-42.2.23.jar
 install_python3: false
+install_python3_8: false

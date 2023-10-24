@@ -29,6 +29,10 @@
 
 # SSB will need the python3-psycopg2 connector
 
+- set_fact:
+    install_python3_8: "true"
+  when: cloudera_cdh_version is version('7.1.8','>=')
+
 - name: Create python3-psycopg2 directory
   file:
       path: "/usr/share/python3"
