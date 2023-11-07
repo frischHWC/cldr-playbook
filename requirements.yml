@@ -25,5 +25,6 @@ collections:
   - name: ansible.posix
   - name: community.crypto
   - name: community.general
+    source: https://old-galaxy.ansible.com
   - name: community.mysql
   - name: freeipa.ansible_freeipa
