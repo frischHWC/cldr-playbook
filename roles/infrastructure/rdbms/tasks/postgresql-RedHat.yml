@@ -34,10 +34,16 @@
   include_role:
     name: geerlingguy.postgresql
 
+- name: Fix for Postgres on RH 8
+  command: systemctl enable postgresql-{{ postgresql_version }}
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version | int >= 8
+  ignore_errors: true
+
 - name: Fix UTF-8 template
   include_tasks:
     file: template_fix.yml
 
+# remove of respositories leads to an issue on RH 8
 - name: Remove repositories and clean metadata
   yum_repository:
     name: "{{ psql_repo_item }}"
@@ -47,5 +53,7 @@
     - pgdg
   loop_control:
     loop_var: psql_repo_item
-  when: not (skip_rdbms_repo_setup | default(False))
+  when: not (skip_rdbms_repo_setup | default(False)) and ansible_os_family == 'RedHat' and ansible_distribution_major_version | int >= 8
   notify: yum clean metadata
+
+
