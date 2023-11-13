@@ -19,9 +19,9 @@ postgresql_bin_path: /usr/pgsql-{{ postgresql_version }}/bin
 postgresql_config_path: /var/lib/pgsql/{{ postgresql_version }}/data
 postgresql_daemon: postgresql-{{ postgresql_version }}.service
 postgresql_packages:
-  - postgresql
-  - postgresql-server
-  - postgresql-libs
-  - postgresql-contrib
-  - postgresql-devel
+  - postgresql{{ postgresql_version | regex_replace('\.','') }}
+  - postgresql{{ postgresql_version | regex_replace('\.','') }}-server
+  - postgresql{{ postgresql_version | regex_replace('\.','') }}-libs
+  - postgresql{{ postgresql_version | regex_replace('\.','') }}-contrib
+  - postgresql{{ postgresql_version | regex_replace('\.','') }}-devel
 postgresql_python_library: python3-psycopg2
