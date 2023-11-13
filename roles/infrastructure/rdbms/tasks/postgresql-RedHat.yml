@@ -36,7 +36,7 @@
 
 - name: Fix for Postgres on RH 8
   command: systemctl enable postgresql-{{ postgresql_version }}
-  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version | int >= 8
+  when: ansible_distribution_major_version | int >= 8
   ignore_errors: true
 
 - name: Fix UTF-8 template
@@ -53,7 +53,7 @@
     - pgdg
   loop_control:
     loop_var: psql_repo_item
-  when: not (skip_rdbms_repo_setup | default(False)) and ansible_os_family == 'RedHat' and ansible_distribution_major_version | int >= 8
+  when: not (skip_rdbms_repo_setup | default(False)) and ansible_distribution_major_version | int < 8
   notify: yum clean metadata
 
 
