@@ -24,7 +24,7 @@ postgresql_packages:
   - postgresql{{ postgresql_version | regex_replace('\.','') }}-server
   - postgresql{{ postgresql_version | regex_replace('\.','') }}-libs
   - postgresql{{ postgresql_version | regex_replace('\.','') }}-contrib
-  - postgresql{{ postgresql_version | regex_replace('\.','') }}-devel
+#  - postgresql{{ postgresql_version | regex_replace('\.','') }}-devel
 postgresql_python_library: python3-psycopg2
 # Patches for RHEL 8 not restarting well the service
 postgresql_service_state: started
