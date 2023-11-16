@@ -1,0 +1,13 @@
+{
+  "items":
+  [
+    {
+      "name":"kafka.connect.protocol",
+      "value":"https"
+    },
+    {
+      "name": "kafka.connect.hostports",
+      "value": "{{ kafka_url }}"
+    }
+  ]
+}

@@ -26,6 +26,5 @@
   file:
     path: "{{ item }}" 
     mode: '0755'
-    remote_src: true
   with_fileglob:
     - "/lib64/libpython3.8.so*"

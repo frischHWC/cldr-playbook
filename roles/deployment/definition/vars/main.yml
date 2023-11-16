@@ -64,6 +64,13 @@ database_defaults:
     name: oozie
     user: oozie
     password: "{{ database_default_password }}"
+  QUERY_PROCESSOR:
+    host: "{{ database_host }}"
+    port: "{{ database_type | default_database_port }}"
+    type: "{{ database_type }}"
+    name: hueqp
+    user: hueqp
+    password: "{{ database_default_password }}"
   RANGER:
     host: "{{ database_host }}"
     port: "{{ database_type | default_database_port }}"
@@ -113,4 +120,11 @@ database_defaults:
     type: "{{ database_type }}"
     name: sentry
     user: sentry
+    password: "{{ database_default_password }}"
+  QUEUEMANAGER:
+    host: "{{ database_host }}"
+    port: "{{ database_type | default_database_port }}"
+    type: "{{ database_type }}"
+    name: queue_manager
+    user: queue_manager
     password: "{{ database_default_password }}"

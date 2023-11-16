@@ -15,6 +15,14 @@ RANGER:
     ranger_database_name: {{ databases.RANGER.name }}
     ranger_database_user: {{ databases.RANGER.user }}
     ranger_database_password: {{ databases.RANGER.password }}
+QUERY_PROCESSOR:
+  SERVICEWIDE:
+    query_processor_database_host: {{ databases.QUERY_PROCESSOR.host }}
+    query_processor_database_port: {{ databases.QUERY_PROCESSOR.port }}
+    query_processor_database_type: {{ databases.QUERY_PROCESSOR.type | format_database_type }}
+    query_processor_database_name: {{ databases.QUERY_PROCESSOR.name }}
+    query_processor_database_username: {{ databases.QUERY_PROCESSOR.user }}
+    query_processor_database_password: {{ databases.QUERY_PROCESSOR.password }}
 SCHEMAREGISTRY:
   SERVICEWIDE:
     database_host: {{ databases.SCHEMAREGISTRY.host }}

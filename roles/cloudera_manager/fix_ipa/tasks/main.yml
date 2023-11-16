@@ -13,6 +13,17 @@
 # limitations under the License.
 
 ---
-psql_connector_url: https://jdbc.postgresql.org/download/postgresql-42.2.23.jar
-install_python3: false
-install_python3_8: false
+
+- name: Template Patch to CM  host
+  template:
+    src: gen.p
+    dest: /tmp/gen_credentials_ipa.p
+
+- name: Apply patch remotely
+  patch:
+    src: /tmp/gen_credentials_ipa.p
+    dest: /opt/cloudera/cm/bin/gen_credentials_ipa.sh
+    remote_src: yes
+    backup: yes
+  ignore_errors: true
+

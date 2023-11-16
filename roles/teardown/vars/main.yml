@@ -42,8 +42,6 @@ base_cluster_directories:
     KAFKA_BROKER:
       - log.dirs
       - log_dir
-      - ranger_kafka_plugin_hdfs_audit_spool_directory
-      - ranger_kafka_plugin_solr_audit_spool_directory
     KAFKA_CONNECT:
       - log_dir
     KAFKA_MIRROR_MAKER:

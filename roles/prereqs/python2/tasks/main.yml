@@ -13,6 +13,7 @@
 # limitations under the License.
 
 ---
-psql_connector_url: https://jdbc.postgresql.org/download/postgresql-42.2.23.jar
-install_python3: false
-install_python3_8: false
+- name: Install python 2
+  package:
+    name: python2
+    state: present

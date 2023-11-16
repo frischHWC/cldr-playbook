@@ -20,6 +20,15 @@
     state: "{{ selinux_state }}"
   ignore_errors: yes
 
+- name: Disable fapolicyd service on RHEL 8
+  service:
+    name: "fapolicyd"
+    state: stopped
+    enabled: false
+  when: ansible_distribution_major_version | int >= 8
+  ignore_errors: yes
+
+
 - name: Disable Transparent Huge Pages until reboot
   shell: echo never > /sys/kernel/mm/transparent_hugepage/{{ item }}
   with_items:
@@ -49,3 +58,10 @@
 - name: Rebuild GRUB
   shell: grub2-mkconfig -o /boot/grub2/grub.cfg
   ignore_errors: yes
+
+- name: Install Development Tools
+  yum:
+    name: "@Development tools"
+    state: present
+  ignore_errors: yes
+

@@ -25,7 +25,7 @@ packages_to_install_for_python_3_8:
 packages_for_psycopg2_3_8:
  - xmlsec1  
  - xmlsec1-openssl
- - "postgresql{{ postgres_version }}-devel"
- - https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+ - postgresql-devel
+ - python3-devel
 
 postgresql_install_path: "/usr/pgsql-{{ postgres_version }}/bin"

@@ -119,7 +119,7 @@
   when: install_python3_8 == true and ansible_os_family == "Suse"
 
 
-# Setup psycopg2 for python 3.8 for Hue
+# Setup psycopg2 version 2.9.3 for python 3.8 for Hue
 - name: Add OS extra repos
   shell: |
     OS_RELEASE=$(rpm -q --qf "%{VERSION}" $(rpm -q --whatprovides redhat-release))
@@ -150,3 +150,4 @@
   environment:
     PATH: "{{ postgresql_install_path }}:{{ ansible_env.PATH }}"
   when: database_type == 'postgresql' and install_python3_8 == true
+  ignore_errors: true

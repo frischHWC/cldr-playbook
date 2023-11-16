@@ -1,0 +1,199 @@
+{
+  "items": [
+    {
+      "name": "{{ cluster_name_pvc }}",
+      "displayName": "{{ cluster_name_pvc }}",
+      "fullVersion": "{{ pvc_version }}",
+      "maintenanceMode": false,
+      "clusterType": "EXPERIENCE_CLUSTER",
+      "tags": [
+        {
+          "name": "_cldr_cm_ek8s_datalake",
+          "value": "{{ cluster_name_pvc }}"
+        }
+      ],
+      "services": [
+        {
+          "roles": [
+            {% for host in hosts_mapping %}
+            {
+              {% if loop.first %}
+              "name": "ecs-ECS_SERVER-{{ loop.index }}",
+              "type": "ECS_SERVER",
+              {% else %}
+              "name": "ecs-ECS_AGENT-{{ loop.index }}",
+              "type": "ECS_AGENT",
+              {% endif %}
+              "hostRef": {
+                "hostId": "{{ host.hostId }}",
+                "hostname": "{{ host.hostname }}"
+              },
+              "config": {
+                "items": []
+              },
+              "roleConfigGroupRef": {
+                {% if loop.first %}
+                "roleConfigGroupName": "ecs-ECS_SERVER-BASE"
+                {% else %}
+                "roleConfigGroupName": "ecs-ECS_AGENT-BASE"
+                {% endif %}
+              },
+              "tags": []
+            }
+            {% if not loop.last %},{% endif %}
+            {% endfor %}
+          ],
+          "roleConfigGroups": [
+            {
+              "name": "ecs-ECS_AGENT-BASE",
+              "displayName": "Ecs Agent Default Group",
+              "roleType": "ECS_AGENT",
+              "base": true,
+              "serviceRef": {
+                "clusterName": "{{ cluster_name_pvc }}",
+                "serviceName": "ecs"
+              },
+              "config": {
+                "items": [
+                  
+                ]
+              }
+            },
+            {
+              "name": "ecs-ECS_SERVER-BASE",
+              "displayName": "Ecs Server Default Group",
+              "roleType": "ECS_SERVER",
+              "base": true,
+              "serviceRef": {
+                "clusterName": "{{ cluster_name_pvc }}",
+                "serviceName": "ecs"
+              },
+              "config": {
+                "items": [
+                  
+                ]
+              }
+            }
+          ],
+          "tags": [
+            
+          ],
+          "name": "ecs",
+          "type": "ECS",
+          "serviceVersion": "EXPERIENCE {{ pvc_version }}",
+          "config": {
+            "items": [
+              {
+                "name": "app_domain",
+                "value": "{{ pvc_app_domain }}",
+                "sensitive": false
+              },
+              {
+                "name": "docker",
+                "value": "docker",
+                "sensitive": false
+              },
+              {
+                "name": "lsoDataPath",
+                "value": "{{ ecs_local_storage }}",
+                "sensitive": false
+              },
+              {
+                "name": "defaultDataPath",
+                "value": "{{ ecs_longhorn_storage }}",
+                "sensitive": false
+              },
+              {
+                "name": "nfs_over_provisioning",
+                "value": "{{ nfs_over_provisioning }}",
+                "sensitive": false
+              },
+              {
+                "name": "longhorn_replication",
+                "value": "{{ longhorn_replication }}",
+                "sensitive": false
+              }
+              {% if use_root_ca %},
+              {
+                "name": "ssl_certificate",
+                "value": "{{ pvc_ssl_cert }}",
+                "sensitive": false
+              },
+              {
+                "name": "ssl_private_key",
+                "value": "{{ pvc_ssl_key }}",
+                "sensitive": false
+              }
+              {% endif %}
+            ]
+          },
+          "displayName": "ECS"
+        },
+        {
+          "roles": [
+            {% for host in hosts_mapping %}
+            {
+              "name": "docker-DOCKER_SERVER-{{ loop.index }}",
+              "type": "DOCKER_SERVER",
+              "hostRef": {
+                "hostId": "{{ host.hostId }}",
+                "hostname": "{{ host.hostname }}"
+              },
+              "config": {
+                "items": []
+              },
+              "roleConfigGroupRef": {
+                "roleConfigGroupName": "docker-DOCKER_SERVER-BASE"
+              },
+              "tags": []
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+          ],
+          "roleConfigGroups": [
+            {
+              "name": "docker-DOCKER_SERVER-BASE",
+              "displayName": "Docker Server Default Group",
+              "roleType": "DOCKER_SERVER",
+              "base": true,
+              "serviceRef": {
+                "clusterName": "{{ cluster_name_pvc }}",
+                "serviceName": "docker"
+              },
+              "config": {
+                "items": [
+                  
+                ]
+              }
+            }
+          ],
+          "tags": [
+            
+          ],
+          "name": "docker",
+          "type": "DOCKER",
+          "serviceVersion": "EXPERIENCE {{ pvc_version }}",
+          "displayName": "DOCKER",
+          "config": {
+            "items": [
+              {
+                "name": "docker_images_destination_registry",
+                "value": "{{ groups['pvc_hosts'][0] }}:5000",
+                "sensitive": false
+              },
+              {
+                "name": "defaultDataPath",
+                "value": "/docker",
+                "sensitive": false
+              },
+              {
+                "name": "docker_server_for_registry",
+                "value": "docker-DOCKER_SERVER-1",
+                "sensitive": false
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

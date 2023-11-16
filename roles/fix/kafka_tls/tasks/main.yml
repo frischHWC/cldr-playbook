@@ -99,9 +99,17 @@
     body: "{{ lookup('template', 'smm.json') }}"
     method: PUT
   register: response_smm
-  when: smm_service_name != ''
+  when: smm_service_name != '' and cloudera_cdh_version is version('7.1.9','<')
+
+- name: Change SMM protocols after TLS enabled
+  cm_api:
+    endpoint: "/clusters/{{ kafka_cluster_name }}/services/{{ smm_service_name }}/roleConfigGroups/{{ smm_service_name }}-STREAMS_MESSAGING_MANAGER_SERVER-BASE/config"
+    body: "{{ lookup('template', 'smm-7.1.9.json') }}"
+    method: PUT
+  register: response_smm
+  when: smm_service_name != '' and cloudera_cdh_version is version('7.1.9','>=')
 
 - name: debug smm
   debug:
     var: response_smm
-  when: debug | default(false) and smm_service_name != ''
+  when: debug | default(false) 

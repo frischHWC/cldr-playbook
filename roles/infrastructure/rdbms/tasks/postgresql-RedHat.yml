@@ -33,6 +33,12 @@
 - name: Install PostgreSQL
   include_role:
     name: geerlingguy.postgresql
+  ignore_errors: true
+
+- name: Fix for Postgres on RH 8
+  command: systemctl enable postgresql-{{ postgresql_version }}
+  when: ansible_distribution_major_version | int >= 8
+  ignore_errors: true
 
 - name: Fix UTF-8 template
   include_tasks:
@@ -49,3 +55,5 @@
     loop_var: psql_repo_item
   when: not (skip_rdbms_repo_setup | default(False))
   notify: yum clean metadata
+
+

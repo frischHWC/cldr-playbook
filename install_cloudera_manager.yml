@@ -77,3 +77,9 @@
   roles:
     - cloudera_manager/external_account
 
+- name: Fix Cloudera Manager with FreeIPA
+  hosts: cloudera_manager
+  gather_facts: no
+  roles:
+    - { role: cloudera_manager/fix_ipa , when: free_ipa | default('false') }
+

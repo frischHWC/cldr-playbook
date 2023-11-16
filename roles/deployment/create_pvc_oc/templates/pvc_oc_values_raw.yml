@@ -136,6 +136,15 @@ Services:
         # username:
         # password:
       # replicaCount: 2
+      
+  dssapp:
+    Config:
+      database:
+        name: db-dss-app
+        # host:
+        # port:
+        # username:
+        # password:
 
   # thunderheadiamconsole:
   #   Config:
