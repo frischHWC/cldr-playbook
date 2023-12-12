@@ -20,6 +20,15 @@
     state: "{{ selinux_state }}"
   ignore_errors: yes
 
+- name: Install libselinux Package
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libselinux-python
+    - libselinux-python3
+  ignore_errors: yes
+
 - name: Disable fapolicyd service on RHEL 8
   service:
     name: "fapolicyd"
