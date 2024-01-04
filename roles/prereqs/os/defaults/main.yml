@@ -29,6 +29,6 @@ unnecessary_services:
   - postfix
   - tuned
 
-selinux_state: permissive
+selinux_state: disabled
 
 install_python3: false

@@ -308,6 +308,7 @@
     body: "{{ temp_ecs_file_content }}"
     timeout: 10800
   register: start_pvc_result
+  ignore_errors: true
 
 - name: Remove temporary start_cp file
   ansible.builtin.file:

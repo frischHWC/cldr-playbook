@@ -18,6 +18,20 @@
     endpoint: /clusters/{{ cluster_to_restart.name }}/commands/restart
     method: POST
     timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  register: restart_cluster_result
+  ignore_errors: true
+
+- name: Pause 1 minute if cluster restart fail
+  pause:
+    seconds: 60
+  when: restart_cluster_result.failed
+
+- name: Restart cluster (If first try failed)
+  cm_api:
+    endpoint: /clusters/{{ cluster_to_restart.name }}/commands/restart
+    method: POST
+    timeout: "{{ cluster_restart_timeout | default(3000) }}"
+  when: restart_cluster_result.failed
 
 - name: Re-deploy client configurations
   cm_api:
