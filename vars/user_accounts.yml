@@ -25,6 +25,10 @@ local_accounts:
     comment: Atlas
     extra_groups: [hadoop]
 
+  - user: cc_metric_reporter
+    home: /var/lib/cc_metric_reporter
+    comment: cc_metric_reporter
+
   - user: cloudera-scm
     home: /var/lib/cloudera-scm-server
     comment: Cloudera Manager
@@ -161,6 +165,16 @@ local_accounts:
   - user: phoenix
     home: /var/lib/phoenix
     comment: Phoenix User
+
+  - user: rangeradmin
+    home: /var/lib/rangeradmin
+    comment: Ranger Admin
+    extra_groups: [hadoop]
+
+  - user: rangerkms
+    home: /var/lib/rangerkms
+    comment: Ranger KMS
+    extra_groups: [hadoop]
 
   - user: ranger
     home: /var/lib/ranger
