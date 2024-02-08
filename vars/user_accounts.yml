@@ -25,6 +25,10 @@ local_accounts:
     comment: Atlas
     extra_groups: [hadoop]
 
+  - user: cc_metric_reporter
+    home: /var/lib/cc_metric_reporter
+    comment: cc_metric_reporter
+
   - user: cloudera-scm
     home: /var/lib/cloudera-scm-server
     comment: Cloudera Manager
@@ -37,6 +41,11 @@ local_accounts:
     home: /var/lib/cruise_control
     comment: Cruise Control
     keystore_acl: True
+
+  - user: dn
+    home: /var/lib/dn
+    comment: Ozone Datanode
+    extra_groups: [hadoop]
 
   - user: druid
     home: /var/lib/druid
@@ -148,9 +157,24 @@ local_accounts:
     comment: Oozie User
     keystore_acl: True
 
+  - user: om
+    home: /var/lib/om
+    comment: Ozone Manager User
+    keystore_acl: True
+
   - user: phoenix
     home: /var/lib/phoenix
     comment: Phoenix User
+
+  - user: rangeradmin
+    home: /var/lib/rangeradmin
+    comment: Ranger Admin
+    extra_groups: [hadoop]
+
+  - user: rangerkms
+    home: /var/lib/rangerkms
+    comment: Ranger KMS
+    extra_groups: [hadoop]
 
   - user: ranger
     home: /var/lib/ranger
@@ -167,9 +191,24 @@ local_accounts:
     comment: Ranger Tagsync User
     extra_groups: [ranger, hadoop]
 
+  - user: recon
+    home: /var/lib/recon
+    comment: Ozone Recon
+    keystore_acl: True
+
+  - user: s3g
+    home: /var/lib/s3g
+    comment: Ozone S3 Gateway
+    keystore_acl: True
+
   - user: schemaregistry
     home: /var/lib/schemaregistry
     comment: Schema Registry
+    keystore_acl: True
+
+  - user: scm
+    home: /var/lib/scm
+    comment: Storage Container Manager User
     keystore_acl: True
 
   - user: sentry
