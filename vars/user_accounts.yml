@@ -136,21 +136,26 @@ local_accounts:
 
   - user: nifi
     home: /var/lib/nifi
-    command: NiFi
+    comment: NiFi
     keystore_acl: True
 
   - user: nifiregistry
     home: /var/lib/nifiregistry
-    command: NiFi Registry
+    comment: NiFi Registry
     keystore_acl: True
 
   - user: nifi
     home: /var/lib/nifi
-    command: NiFi
+    comment: NiFi
 
   - user: nifiregistry
     home: /var/lib/nifiregistry
-    command: NiFi Registry
+    comment: NiFi Registry
+
+  - user: observability
+    home: /var/lib/observability
+    comment: Observability
+    extra_groups: [hadoop]
 
   - user: oozie
     home: /var/lib/oozie

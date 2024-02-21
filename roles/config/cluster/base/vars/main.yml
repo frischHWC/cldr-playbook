@@ -81,6 +81,8 @@ custom_config_templates:
   - template: configs/sentry.j2
     condition: "{{ 'SENTRY' in cluster.services }}"
 # Custom configurations for WorkloadXM
+  - template: configs/observability.j2
+    condition: "{{ 'OBSERVABILITY' in cluster.services }}"
   - template: configs/wxm.j2
     condition: "{{ 'WXM' in cluster.services }}"
 # Custom configuration for /var/lib directory
