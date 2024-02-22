@@ -70,3 +70,4 @@ OBSERVABILITY:
   SERVICEWIDE:
     impala_daemon_host: {{ groups.impala_impalad | first }}
     phoenix_queryserver_host: {{ groups.phoenix_phoenix_query_server | first }}
+    kafka_broker_host: {{ groups.kafka_kafka_broker | first }}
