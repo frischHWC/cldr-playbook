@@ -11,6 +11,8 @@ HBASE:
       </property>
   REGIONSERVER:
     hbase_regionserver_wal_codec: org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec
+    hbase_regionserver_handler_count: 40
+    hbase_hstore_blockingStoreFiles: 100
   SERVICEWIDE:
     hbase_client_keyvalue_maxsize: 52428800
     hbase_service_config_safety_valve: >
@@ -61,6 +63,9 @@ KAFKA:
   SERVICEWIDE:
     num.partitions: 48
     offsets.retention.minutes: 20160  
+ZOOKEEPER:
+  SERVER:
+    maxClientCnxns: 300
 OBSERVABILITY:
   SERVICEWIDE:
     impala_daemon_host: {{ groups.impala_impalad | first }}
