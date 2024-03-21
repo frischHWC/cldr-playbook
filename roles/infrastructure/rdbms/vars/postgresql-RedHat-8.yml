@@ -26,6 +26,6 @@ postgresql_packages:
   - postgresql{{ postgresql_version | regex_replace('\.','') }}-devel
 postgresql_python_library: python3-psycopg2
 # Patches for RHEL 8 not restarting well the service
-postgresql_service_state: started
-postgresql_restarted_state: enabled
+postgresql_service_state: stopped
+postgresql_restarted_state: restarted
 postgresql_service_enabled: true
