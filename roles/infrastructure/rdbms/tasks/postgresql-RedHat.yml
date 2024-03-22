@@ -30,6 +30,11 @@
     gpgcheck: 0
   when: not (skip_rdbms_repo_setup | default(False))
 
+- name: Fix for RHEL 8 - Disable default version
+  command: sudo dnf -qy module disable postgresql
+  when: ansible_distribution_major_version | int >= 8
+  ignore_errors: true
+
 - name: Install PostgreSQL
   include_role:
     name: geerlingguy.postgresql
