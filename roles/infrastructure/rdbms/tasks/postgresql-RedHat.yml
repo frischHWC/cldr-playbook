@@ -31,7 +31,17 @@
   when: not (skip_rdbms_repo_setup | default(False))
 
 - name: Fix for RHEL 8 - Disable default version
-  command: sudo dnf -qy module disable postgresql
+  command: dnf -qy module disable postgresql
+  when: ansible_distribution_major_version | int >= 8
+  ignore_errors: true
+
+- name: Fix for Postgres on RH 8
+  command: systemctl disable postgresql-{{ postgresql_version }}
+  when: ansible_distribution_major_version | int >= 8
+  ignore_errors: true
+
+- name: Fix for Postgres on RH 8
+  command: systemctl enable postgresql-{{ postgresql_version }}
   when: ansible_distribution_major_version | int >= 8
   ignore_errors: true
 
@@ -41,12 +51,7 @@
   ignore_errors: true
 
 - name: Fix for Postgres on RH 8
-  command: systemctl enable postgresql-{{ postgresql_version }}
-  when: ansible_distribution_major_version | int >= 8
-  ignore_errors: true
-
-- name: Fix for Postgres on RH 8
-  command: systemctl start postgresql-{{ postgresql_version }}
+  command: systemctl restart postgresql-{{ postgresql_version }}
   when: ansible_distribution_major_version | int >= 8
   ignore_errors: true
 
