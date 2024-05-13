@@ -19,7 +19,7 @@
     name: MariaDB
     description: MariaDB {{ database_version }} repository for RHEL/CentOS {{ ansible_facts['distribution_major_version'] }}
     baseurl: https://yum.mariadb.org/{{ database_version }}/rhel{{ ansible_facts['distribution_major_version'] }}-amd64
-    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    gpgcheck: 0
   when: not (skip_rdbms_repo_setup | default(False))
 
 - name: Install MariaDB package
