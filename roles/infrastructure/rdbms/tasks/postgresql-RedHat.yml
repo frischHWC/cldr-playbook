@@ -30,10 +30,6 @@
     gpgcheck: 0
   when: not (skip_rdbms_repo_setup | default(False))
 
-- name: Fix for RHEL 8 - Disable default version
-  command: dnf -qy module disable postgresql
-  when: ansible_distribution_major_version | int >= 8
-  ignore_errors: true
 
 - name: Fix for Postgres on RH 8 - Disable 
   command: systemctl disable postgresql-{{ postgresql_version }}
@@ -79,6 +75,25 @@
     - "host all all 0.0.0.0/0   md5"
   when: setup_db_no_gl | default(false)
 
+- name: Listen on all addresses
+  lineinfile:
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf"
+    line: "listen_addresses = '*'"
+    regex: "^#listen_addresses"
+  when: setup_db_no_gl | default(false)
+
+- name: Raise max connections
+  lineinfile:
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf"
+    line: "max_connections = '3000'"
+    regex: "^#max_connections"
+  when: setup_db_no_gl | default(false)
+
+- name: Restart Postgres
+  service:
+    name: "postgresql-{{ postgresql_version }}"
+    state: restarted
+  when: setup_db_no_gl | default(false)
 
 - name: Fix for Postgres on RH 8 - Enable
   command: systemctl enable postgresql-{{ postgresql_version }}
