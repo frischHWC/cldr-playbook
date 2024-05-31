@@ -51,6 +51,14 @@
   ignore_errors: true
   when: not setup_db_no_gl | default(true)
 
+
+- name: Remove old postgres dir if existing
+  file: 
+    name: "/var/lib/pgsql/{{ postgres_version }}/"
+    state: absent
+  when: setup_db_no_gl | default(false)
+  ignore_errors: true
+
 - name: Install PostgreSQL 
   package: 
     name: "postgresql{{ postgresql_version }}-server"
@@ -70,6 +78,7 @@
     - "host all all ::1/128   md5"
     - "host all all 0.0.0.0/0   md5"
   when: setup_db_no_gl | default(false)
+
 
 - name: Fix for Postgres on RH 8 - Enable
   command: systemctl enable postgresql-{{ postgresql_version }}
