@@ -54,7 +54,7 @@
 
 - name: Remove old postgres dir if existing
   file: 
-    name: "/var/lib/pgsql/{{ postgres_version }}/"
+    name: "/var/lib/pgsql/{{ postgresql_version }}/"
     state: absent
   when: setup_db_no_gl | default(false)
   ignore_errors: true
