@@ -53,7 +53,7 @@
 
 - name: Install PostgreSQL 
   package: 
-    name: "postgresql{{ postgresql_version }}-version"
+    name: "postgresql{{ postgresql_version }}-server"
     state: present
   when: setup_db_no_gl | default(false)
 
