@@ -52,7 +52,9 @@
   when: not setup_db_no_gl | default(true)
 
 - name: Install PostgreSQL 
-  package: "postgresql{{ postgresql_version }}-version"
+  package: 
+    name: "postgresql{{ postgresql_version }}-version"
+    state: present
   when: setup_db_no_gl | default(false)
 
 - name: Init postgresql
