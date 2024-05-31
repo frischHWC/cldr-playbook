@@ -34,6 +34,13 @@
     state: present
   when: install_python3 == true and install_python3_8 == false
 
+# On RHEL 8, as psycopg2 will be installed on python 3.8, it also requires to be on default python (3.6) for being used by Ansible (for DB creation)
+- name: Install psycopg2 2.8.5 for Python3.6
+  shell: |
+    /usr/bin/pip-3.6 install psycopg2-binary==2.8.5 --ignore-installed
+  when: database_type == 'postgresql' and install_python3_8 == true and ansible_os_family == 'RedHat' and ansible_distribution_major_version | int >= 8
+  ignore_errors: true
+
 
 # In case of 7.1.8 or above, make a custom installation of python 3.8 to be able to use Hue
 
