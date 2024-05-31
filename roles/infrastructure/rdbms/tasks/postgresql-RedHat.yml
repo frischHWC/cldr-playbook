@@ -49,15 +49,15 @@
   include_role:
     name: geerlingguy.postgresql
   ignore_errors: true
-  when: setup_db_no_gl = 'false' | default(false)
+  when: not setup_db_no_gl | default(true)
 
 - name: Install PostgreSQL 
   package: "postgresql{{ postgresql_version }}-version"
-  when: setup_db_no_gl = 'true' | default(false)
+  when: setup_db_no_gl | default(false)
 
 - name: Init postgresql
   shell: "/usr/pgsql-{{ postgresql_version }}/bin/postgresql-{{ postgresql_version }}-setup initdb"
-  when: setup_db_no_gl = 'true' | default(false)
+  when: setup_db_no_gl | default(false)
 
 - name: Add non-local logins with md5
   lineinfile:
@@ -67,7 +67,7 @@
     - "host all all 127.0.0.1/32   md5"
     - "host all all ::1/128   md5"
     - "host all all 0.0.0.0/0   md5"
-  when: setup_db_no_gl = 'true' | default(false)
+  when: setup_db_no_gl | default(false)
 
 - name: Fix for Postgres on RH 8 - Enable
   command: systemctl enable postgresql-{{ postgresql_version }}
