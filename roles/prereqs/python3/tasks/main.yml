@@ -158,3 +158,11 @@
     PATH: "{{ postgresql_install_path }}:{{ ansible_env.PATH }}"
   when: database_type == 'postgresql' and install_python3_8 == true
   ignore_errors: true
+
+- name: Install psycopg2-binary 2.9.3 
+  shell: |
+    /usr/local/bin/pip3.8 install psycopg2-binary==2.9.3 --ignore-installed
+  environment:
+    PATH: "{{ postgresql_install_path }}:{{ ansible_env.PATH }}"
+  when: database_type == 'postgresql' and install_python3_8 == true
+  ignore_errors: true
