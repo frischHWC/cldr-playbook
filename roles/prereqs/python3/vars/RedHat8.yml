@@ -25,7 +25,8 @@ packages_to_install_for_python_3_8:
 packages_for_psycopg2_3_8:
  - xmlsec1  
  - xmlsec1-openssl
- - postgresql-devel
+ #- postgresql-devel
+ - postgresql
  - python3-devel
 
 postgresql_install_path: "/usr/pgsql-{{ postgres_version }}/bin"
