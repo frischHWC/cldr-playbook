@@ -135,7 +135,7 @@
     #additional packages that may be useful
     [extras]
     name=CentOS-$OS_RELEASE_MAJOR - Extras
-    mirrorlist=http://mirrorlist.centos.org/?release=$OS_RELEASE_MAJOR&arch=\$basearch&repo=extras
+    mirrorlist=http://vault.centos.org/?release=$OS_RELEASE_MAJOR&arch=\$basearch&repo=extras
     #baseurl=http://mirror.centos.org/centos/$OS_RELEASE_MAJOR/extras/\$basearch/
     enabled=1
     gpgcheck=1
