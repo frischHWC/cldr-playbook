@@ -34,6 +34,13 @@
     state: present
   when: install_python3 == true and install_python3_8 == false
 
+# On RHEL 8, as psycopg2 will be installed on python 3.8, it also requires to be on default python (3.6) for being used by Ansible (for DB creation)
+- name: Install psycopg2 2.8.5 for Python3.6
+  shell: |
+    /usr/bin/pip-3.6 install psycopg2-binary==2.8.5 --ignore-installed
+  when: database_type == 'postgresql' and install_python3_8 == true and ansible_os_family == 'RedHat' and ansible_distribution_major_version | int >= 8
+  ignore_errors: true
+
 
 # In case of 7.1.8 or above, make a custom installation of python 3.8 to be able to use Hue
 
@@ -128,8 +135,8 @@
     #additional packages that may be useful
     [extras]
     name=CentOS-$OS_RELEASE_MAJOR - Extras
-    mirrorlist=http://mirrorlist.centos.org/?release=$OS_RELEASE_MAJOR&arch=\$basearch&repo=extras
-    #baseurl=http://mirror.centos.org/centos/$OS_RELEASE_MAJOR/extras/\$basearch/
+    #mirrorlist=http://vault.centos.org/?release=$OS_RELEASE_MAJOR&arch=\$basearch&repo=extras
+    baseurl=http://vault.centos.org/centos/$OS_RELEASE_MAJOR/extras/\$basearch/
     enabled=1
     gpgcheck=1
     gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-$OS_RELEASE_MAJOR
@@ -147,6 +154,14 @@
 - name: Install psycopg2 2.9.3
   shell: |
     /usr/local/bin/pip3.8 install psycopg2==2.9.3 --ignore-installed
+  environment:
+    PATH: "{{ postgresql_install_path }}:{{ ansible_env.PATH }}"
+  when: database_type == 'postgresql' and install_python3_8 == true
+  ignore_errors: true
+
+- name: Install psycopg2-binary 2.9.3 
+  shell: |
+    /usr/local/bin/pip3.8 install psycopg2-binary==2.9.3 --ignore-installed
   environment:
     PATH: "{{ postgresql_install_path }}:{{ ansible_env.PATH }}"
   when: database_type == 'postgresql' and install_python3_8 == true

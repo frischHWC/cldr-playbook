@@ -30,15 +30,80 @@
     gpgcheck: 0
   when: not (skip_rdbms_repo_setup | default(False))
 
+
+- name: Fix for Postgres on RH 8 - Disable 
+  command: systemctl disable postgresql-{{ postgresql_version }}
+  when: ansible_distribution_major_version | int >= 8
+  ignore_errors: true
+
+- name: Fix for Postgres on RH 8 - Enable
+  command: systemctl enable postgresql-{{ postgresql_version }}
+  when: ansible_distribution_major_version | int >= 8
+  ignore_errors: true
+
 - name: Install PostgreSQL
   include_role:
     name: geerlingguy.postgresql
   ignore_errors: true
+  when: not setup_db_no_gl | default(true)
 
-- name: Fix for Postgres on RH 8
-  command: systemctl enable postgresql-{{ postgresql_version }}
-  when: ansible_distribution_major_version | int >= 8
+
+- name: Remove old postgres dir if existing
+  file: 
+    name: "/var/lib/pgsql/{{ postgresql_version }}/"
+    state: absent
+  when: setup_db_no_gl | default(false)
   ignore_errors: true
+
+- name: Install PostgreSQL 
+  package: 
+    name: "postgresql{{ postgresql_version }}-server"
+    state: present
+  when: setup_db_no_gl | default(false)
+
+- name: Init postgresql
+  shell: "/usr/pgsql-{{ postgresql_version }}/bin/postgresql-{{ postgresql_version }}-setup initdb"
+  when: setup_db_no_gl | default(false)
+
+- name: Add non-local logins with md5
+  lineinfile:
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/pg_hba.conf"
+    line: "{{ item }}"
+  loop:
+    - "host all all 127.0.0.1/32   md5"
+    - "host all all ::1/128   md5"
+    - "host all all 0.0.0.0/0   md5"
+  when: setup_db_no_gl | default(false)
+
+- name: Listen on all addresses
+  lineinfile:
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf"
+    line: "listen_addresses = '*'"
+    regex: "^#listen_addresses"
+  when: setup_db_no_gl | default(false)
+
+- name: Raise max connections
+  lineinfile:
+    dest: "/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf"
+    line: "max_connections = '3000'"
+    regex: "^#max_connections"
+  when: setup_db_no_gl | default(false)
+
+- name: Restart Postgres
+  service:
+    name: "postgresql-{{ postgresql_version }}"
+    state: restarted
+  when: setup_db_no_gl | default(false)
+
+# - name: Fix for Postgres on RH 8 - Enable
+#   command: systemctl enable postgresql-{{ postgresql_version }}
+#   when: ansible_distribution_major_version | int >= 8
+#   ignore_errors: true
+  
+# - name: Fix for Postgres on RH 8 - restart
+#   command: systemctl restart postgresql-{{ postgresql_version }}
+#   when: ansible_distribution_major_version | int >= 8
+#   ignore_errors: true
 
 - name: Fix UTF-8 template
   include_tasks:
