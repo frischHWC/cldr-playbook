@@ -76,3 +76,14 @@
     - { role: prereqs/python2 , when: encryption_activated | default('false') }
   tags:
     - python
+
+
+# TODO: Add prereqs for GPU.
+- name: Pre-requisites on ECS Nodes for GPU
+  hosts: pvc_hosts
+  gather_facts: false
+  roles: 
+    - role: prerequisites/prereqs_gu
+      when: pvc_type == "ECS"
+  tags:
+    - pvc
