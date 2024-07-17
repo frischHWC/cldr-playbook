@@ -39,13 +39,13 @@
   get_url:
     url: "https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64/cuda-rhel{{ ansible_distribution_major_version }}.repo"
     dest: /etc/yum.repos.d/
-    mode: '0544'
+    mode: '0644'
 
 - name: Install Nvidia Container repository
   get_url:
     url: "https://nvidia.github.io/libnvidia-container/rhel{{ ansible_distribution_version }}/libnvidia-container.repo"
     dest: /etc/yum.repos.d/
-    mode: '0544'
+    mode: '0644'
 
 - name: Enable Nvidia module 
   dnf:
@@ -74,13 +74,13 @@
 
 - name: Enable nvidia-fabricmanager
   service:
-    state: enabled
     name: nvidia-fabricmanager
+    enabled: yes
 
 - name: Enable nvidia-persistenced
   service:
-    state: enabled
     name: nvidia-persistenced
+    enabled: yes
 
 - name: Install nvidia-container-toolkit 
   dnf:
