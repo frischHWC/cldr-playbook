@@ -74,12 +74,12 @@
   shell: dracut --force
 
 - name: Enable nvidia-fabricmanager
-  systemd_service:
+  service:
     state: enabled
     name: nvidia-fabricmanager
 
 - name: Enable nvidia-persistenced
-  systemd_service:
+  service:
     state: enabled
     name: nvidia-persistenced
 
