@@ -77,8 +77,6 @@
   tags:
     - python
 
-
-# TODO: Add prereqs for GPU.
 - name: Pre-requisites on ECS Nodes for GPU
   hosts: pvc_hosts
   gather_facts: false
