@@ -125,6 +125,13 @@
                 "sensitive": false
               }
               {% endif %}
+              {% if ecs_service_env_safety_valve != None and ecs_service_env_safety_valve != '' %},
+              {
+                "name": "ECS_service_env_safety_valve",
+                "value": "{{ ecs_service_env_safety_valve }}",
+                "sensitive": false
+              }
+              {% endif %}
             ]
           },
           "displayName": "ECS"

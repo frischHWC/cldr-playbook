@@ -238,4 +238,4 @@ ExternalAuth:
 #   Enabled: false
 
 Storage:
-  StorageClass: ocs-storagecluster-ceph-rbd
+  StorageClass: ocs-storagecluster-cephfs

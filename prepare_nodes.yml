@@ -76,3 +76,15 @@
     - { role: prereqs/python2 , when: encryption_activated | default('false') }
   tags:
     - python
+
+- name: Pre-requisites on ECS Nodes for GPU
+  hosts: pvc_hosts
+  gather_facts: false
+  roles: 
+    - role: prereqs/pvc_ecs_gpu
+      when: 
+        - pvc_type == "ECS"
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version | int >= 8
+  tags:
+    - pvc
