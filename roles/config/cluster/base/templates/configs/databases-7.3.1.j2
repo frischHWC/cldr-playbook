@@ -1,0 +1,9 @@
+---
+KNOX:
+  SERVICEWIDE:
+    knox_gateway_database_host: {{ databases.KNOX.host }}
+    knox_gateway_database_port: {{ databases.KNOX.port }}
+    knox_gateway_database_type: {{ databases.KNOX.type | format_database_type }}
+    knox_gateway_database_name: {{ databases.KNOX.name }}
+    knox_gateway_database_user: {{ databases.KNOX.user }}
+    knox_gateway_database_password: {{ databases.KNOX.password }}
