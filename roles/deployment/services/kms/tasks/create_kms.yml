@@ -40,13 +40,20 @@
     - runtime_parcel_version is version('5.0.0', '>=')
     - runtime_parcel_version is version('7.0.0', '<')
 
-- name: Use Ranger-based KMS services for CDP Private Cloud Base 7.x
+- name: Use Ranger-based KMS services for CDP Private Cloud Base 7.3.x
   set_fact:
     kms_service_type: RANGER_KMS_KTS
     kms_role_type: RANGER_KMS_SERVER_KTS
     kms_display_name: Ranger KMS Server with KTS
   when: runtime_parcel_version is version('7.0.0', '>=')
 
+- name: Use Ranger-based KMS services for CDP Private Cloud Base 7.x
+  set_fact:
+    kms_service_type: RANGER_KMS
+    kms_role_type: RANGER_KMS_SERVER
+    kms_display_name: Ranger KMS Server
+  when: runtime_parcel_version is version('7.3.1.0', '>=')
+  
 - name: Set fact for hostname of active Key Trustee server
   set_fact:
     keytrustee_server_active: "{{ groups.kts_active | first | default('') }}"
