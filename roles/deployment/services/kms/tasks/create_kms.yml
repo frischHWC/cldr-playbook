@@ -64,9 +64,14 @@
 - set_fact:
     primary_kms_role_query: items[?hostRef.hostname==`{{ cloudera_manager_api_hosts[groups.kms_servers[0]]['hostname'] }}`].name
 
-- name: Wait to generate missing credentials before starting
+- name: Setup Ranger KMS 
+  cm_api:
+    endpoint: /clusters/{{ cluster.name | urlencode() }}/services/{{ kms_service_name }}/commands/SetupRangerKMS
+    method: POST
+
+- name: Wait for Ranger KMS Server to be setup 
   pause:
-    seconds: 10 
+    seconds: 30 
 
 - name: Start first KMS server instance
   cm_api:
