@@ -13,16 +13,6 @@
 # limitations under the License.
 
 ---
-
-# - name: Restart All Clusters
-#   hosts: cloudera_manager
-#   roles:
-#     - operations/restart_all_clusters
-#   tags:
-#     - kts
-#   vars:
-#     cluster_restart_timeout: 3600
-
 - name: Group hosts using host template information
   hosts: all
   gather_facts: no
@@ -36,19 +26,6 @@
   when: "'kms_servers' in groups"
   tags:
     - kms
-
-# - name: Enable KMS HA
-#   import_playbook: setup_kms_ha.yml
-#   when:
-#     - "'kms_servers' in groups and groups.kms_servers | length > 1"
-#   tags:
-#     - kms
-
-# - name: Refresh KMS Ranger Repo
-#   import_playbook: refresh_ranger_kms_repo.yml
-#   when: "'kms_servers' in groups"
-#   tags:
-#     - kms
 
 - name: Restart All Clusters
   hosts: cloudera_manager
