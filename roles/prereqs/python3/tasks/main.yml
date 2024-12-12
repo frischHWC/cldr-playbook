@@ -22,8 +22,20 @@
 #     install_python3_8: "true"
 #   when: cloudera_cdh_version is version('7.1.8','>=') and cloudera_cdh_version is version('7.1.10','<=')
 
-# From 7.3.1, Hue requires python 3.9; which is easily installable 
 - name: Install python 3
+  package:
+    name: python3
+    state: present
+  when: install_python3 == true
+
+- name: Install psycopg2 for Python 3
+  shell: |
+    pip3 install psycopg2-binary --ignore-installed
+  when: database_type == 'postgresql' 
+  ignore_errors: true
+
+# From 7.3.1, Hue requires python 3.9; which is easily installable 
+- name: Install python 3.9
   package:
     name: python3.9
     state: present
@@ -32,7 +44,7 @@
 - name: Install psycopg2 for Python 3.9
   shell: |
     pip3.9 install psycopg2-binary --ignore-installed
-  when: database_type == 'postgresql' and install_python3_8 == true 
+  when: database_type == 'postgresql' # and install_python3_8 == true 
   ignore_errors: true
 
 # - name: Install pip3
