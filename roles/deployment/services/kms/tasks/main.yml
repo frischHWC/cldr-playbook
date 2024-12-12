@@ -14,24 +14,24 @@
 
 ---
 
-- set_fact:
-    keytrustee_server_conf_dir: "{{ hostvars[groups.kts_active[0]]['keytrustee_server_conf_dir'] }}"
-    keytrustee_server_org_name: "{{ hostvars[groups.kts_active[0]]['keytrustee_server_org_name'] }}"
+# - set_fact:
+#     keytrustee_server_conf_dir: "{{ hostvars[groups.kts_active[0]]['keytrustee_server_conf_dir'] }}"
+#     keytrustee_server_org_name: "{{ hostvars[groups.kts_active[0]]['keytrustee_server_org_name'] }}"
 
-- set_fact:
-    auth_secret_query: "{{ keytrustee_server_org_name }}.auth_secret"
+# - set_fact:
+#     auth_secret_query: "{{ keytrustee_server_org_name }}.auth_secret"
 
-- name: Get Key Trustee organisation auth secret
-  shell: >
-    keytrustee-orgtool --confdir {{ keytrustee_server_conf_dir }} list
-  become: yes
-  delegate_to: "{{ groups.kts_active | first }}"
-  connection: ssh
-  register: orgtool_output
+# - name: Get Key Trustee organisation auth secret
+#   shell: >
+#     keytrustee-orgtool --confdir {{ keytrustee_server_conf_dir }} list
+#   become: yes
+#   delegate_to: "{{ groups.kts_active | first }}"
+#   connection: ssh
+#   register: orgtool_output
 
-- name: Extract auth secret from keytrustee-orgtool output
-  set_fact:
-    keytrustee_server_auth_secret: "{{ orgtool_output.stdout | from_json | json_query(auth_secret_query) }}"
+# - name: Extract auth secret from keytrustee-orgtool output
+#   set_fact:
+#     keytrustee_server_auth_secret: "{{ orgtool_output.stdout | from_json | json_query(auth_secret_query) }}"
 
 - name: Create KMS services
   include_tasks: create_kms.yml

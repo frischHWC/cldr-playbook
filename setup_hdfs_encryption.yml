@@ -14,14 +14,14 @@
 
 ---
 
-- name: Restart All Clusters
-  hosts: cloudera_manager
-  roles:
-    - operations/restart_all_clusters
-  tags:
-    - kts
-  vars:
-    cluster_restart_timeout: 3600
+# - name: Restart All Clusters
+#   hosts: cloudera_manager
+#   roles:
+#     - operations/restart_all_clusters
+#   tags:
+#     - kts
+#   vars:
+#     cluster_restart_timeout: 3600
 
 - name: Group hosts using host template information
   hosts: all
@@ -31,42 +31,24 @@
   tags:
     - always
 
-- name: Setup Key Trustee Server HA
-  import_playbook: setup_kts_ha.yml
-  when: "'kts_passive' in groups"
-  tags:
-    - kts
-
-- name: Create Key Trustee Server organisation
-  hosts: kts_active
-  become: yes
-  tasks:
-    - shell: >
-        keytrustee-orgtool add
-        -n {{ keytrustee_server_org_name }}
-        -c {{ keytrustee_server_org_email }}
-        --confdir {{ keytrustee_server_conf_dir }}
-  tags:
-    - kts
-
 - name: Setup KMS service
   import_playbook: setup_kms_service.yml
   when: "'kms_servers' in groups"
   tags:
     - kms
 
-- name: Enable KMS HA
-  import_playbook: setup_kms_ha.yml
-  when:
-    - "'kms_servers' in groups and groups.kms_servers | length > 1"
-  tags:
-    - kms
+# - name: Enable KMS HA
+#   import_playbook: setup_kms_ha.yml
+#   when:
+#     - "'kms_servers' in groups and groups.kms_servers | length > 1"
+#   tags:
+#     - kms
 
-- name: Refresh KMS Ranger Repo
-  import_playbook: refresh_ranger_kms_repo.yml
-  when: "'kms_servers' in groups"
-  tags:
-    - kms
+# - name: Refresh KMS Ranger Repo
+#   import_playbook: refresh_ranger_kms_repo.yml
+#   when: "'kms_servers' in groups"
+#   tags:
+#     - kms
 
 - name: Restart All Clusters
   hosts: cloudera_manager
