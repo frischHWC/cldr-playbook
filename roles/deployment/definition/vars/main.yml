@@ -78,6 +78,13 @@ database_defaults:
     name: ranger
     user: rangeradmin
     password: "{{ database_default_password }}"
+  RANGER_KMS:
+    host: "{{ database_host }}"
+    port: "{{ database_type | default_database_port }}"
+    type: "{{ database_type }}"
+    name: rangerkms
+    user: rangerkms
+    password: "{{ database_default_password }}"
   REPORTSMANAGER:
     host: "{{ database_host }}"
     port: "{{ database_type | default_database_port }}"
@@ -127,4 +134,11 @@ database_defaults:
     type: "{{ database_type }}"
     name: queue_manager
     user: queue_manager
+    password: "{{ database_default_password }}"
+  KNOX:
+    host: "{{ database_host }}"
+    port: "{{ database_type | default_database_port }}"
+    type: "{{ database_type }}"
+    name: knox
+    user: knox
     password: "{{ database_default_password }}"
