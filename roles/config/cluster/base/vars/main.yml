@@ -22,6 +22,8 @@ custom_config_templates:
     condition: "{{ cloudera_runtime_version is version('7.1.0','>=') }}"
   - template: configs/databases-7.1.9.j2
     condition: "{{ cloudera_runtime_version is version('7.1.9','>=') }}"
+  - template: configs/databases-7.3.1.j2
+    condition: "{{ cloudera_runtime_version is version('7.3.0','>=') }}"
 # Custom configurations for Infra Solr
   - template: configs/infra-solr.j2
     condition: "{{ 'INFRA_SOLR' in cluster.services }}"
