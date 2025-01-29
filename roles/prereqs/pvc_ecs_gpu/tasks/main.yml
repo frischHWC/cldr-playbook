@@ -1,88 +1,108 @@
-#
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#  http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
----
-# TODO: Add Nvidia drivers
+# #
+# # Licensed to the Apache Software Foundation (ASF) under one
+# # or more contributor license agreements.  See the NOTICE file
+# # distributed with this work for additional information
+# # regarding copyright ownership.  The ASF licenses this file
+# # to you under the Apache License, Version 2.0 (the
+# # "License"); you may not use this file except in compliance
+# # with the License.  You may obtain a copy of the License at
+# #
+# #  http://www.apache.org/licenses/LICENSE-2.0
+# #
+# # Unless required by applicable law or agreed to in writing,
+# # software distributed under the License is distributed on an
+# # "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# # KIND, either express or implied.  See the License for the
+# # specific language governing permissions and limitations
+# # under the License.
+# #
+# ---
+# # TODO: Add Nvidia drivers
 
 
-# https://docs.nvidia.com/datacenter/cloud-native/edge/latest/nvidia-gpu-with-device-edge.html#installing-the-nvidia-container-toolkit 
+# # https://docs.nvidia.com/datacenter/cloud-native/edge/latest/nvidia-gpu-with-device-edge.html#installing-the-nvidia-container-toolkit 
 
-# dnf config-manager --add-repo=https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo
-# sudo dnf module install nvidia-driver:525
-# sudo dnf install nvidia-fabric-manager libnvidia-nscq-525
-# echo 'blacklist nouveau' | sudo tee /etc/modprobe.d/nouveau-blacklist.conf
-# sudo dracut --force
-# sudo systemctl enable nvidia-fabricmanager.service
-# sudo systemctl enable nvidia-persistenced.service
+# # dnf config-manager --add-repo=https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/cuda-rhel8.repo
+# # sudo dnf module install nvidia-driver:525
+# # sudo dnf install nvidia-fabric-manager libnvidia-nscq-525
+# # echo 'blacklist nouveau' | sudo tee /etc/modprobe.d/nouveau-blacklist.conf
+# # sudo dracut --force
+# # sudo systemctl enable nvidia-fabricmanager.service
+# # sudo systemctl enable nvidia-persistenced.service
 
-# wget  https://nvidia.github.io/libnvidia-container/rhel8.8/libnvidia-container.repo -L /etc/yum.repos.d/libnvidia-container.repo
-# dnf install nvidia-container-toolkit -y
+# # wget  https://nvidia.github.io/libnvidia-container/rhel8.8/libnvidia-container.repo -L /etc/yum.repos.d/libnvidia-container.repo
+# # dnf install nvidia-container-toolkit -y
 
-# systemctl reboot
+# # systemctl reboot
 
-- name: Install Nvidia repository
-  get_url:
-    url: "https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64/cuda-rhel{{ ansible_distribution_major_version }}.repo"
-    dest: /etc/yum.repos.d/
-    mode: '0644'
+# # To remove it:
+# # dnf module remove -y --all nvidia-driver
+# # dnf module reset -y nvidia-driver
+# # dnf remove -y cuda-toolkit
+# # dnf remove -y nvidia-gds
+# # dnf remove -y nvidia-fabric-manager
+# # dnf remove -y libnvidia-nscq-525
+# # dnf remove -y nvidia-container-toolkit
 
-- name: Install Nvidia Container repository
-  get_url:
-    url: "https://nvidia.github.io/libnvidia-container/rhel{{ ansible_distribution_version }}/libnvidia-container.repo"
-    dest: /etc/yum.repos.d/
-    mode: '0644'
+# - name: Install Nvidia repository
+#   get_url:
+#     url: "https://developer.download.nvidia.com/compute/cuda/repos/rhel{{ ansible_distribution_major_version }}/x86_64/cuda-rhel{{ ansible_distribution_major_version }}.repo"
+#     dest: /etc/yum.repos.d/
+#     mode: '0644'
 
-- name: Enable Nvidia module 
-  dnf:
-    name: '@nvidia-driver:525'
-    state: present
+# - name: Install Nvidia Container repository
+#   get_url:
+#     url: "https://nvidia.github.io/libnvidia-container/rhel{{ ansible_distribution_version }}/libnvidia-container.repo"
+#     dest: /etc/yum.repos.d/
+#     mode: '0644'
 
-- name: Install nvidia-fabric-manager 
-  dnf:
-    name: 'nvidia-fabric-manager'
-    state: present
+# - name: Enable Nvidia module 
+#   dnf:
+#     name: '@nvidia-driver:525'
+#     state: present
 
-- name: Enable Nvidia libnvidia-nscq-525 
-  dnf:
-    name: 'libnvidia-nscq-525'
-    state: present
+# - name: Install nvidia-fabric-manager 
+#   dnf:
+#     name: 'nvidia-fabric-manager'
+#     state: present
 
-- name: Blacklist nouveau
-  lineinfile:
-    path: /etc/modprobe.d/nouveau-blacklist.conf
-    regexp: 'blacklist nouveau'
-    line: 'blacklist nouveau'
-    create: true
+# - name: Enable Nvidia libnvidia-nscq-525 
+#   dnf:
+#     name: 'libnvidia-nscq-525'
+#     state: present
 
-- name: Dracut
-  shell: dracut --force
+# - name: Blacklist nouveau
+#   lineinfile:
+#     path: /etc/modprobe.d/nouveau-blacklist.conf
+#     regexp: 'blacklist nouveau'
+#     line: 'blacklist nouveau'
+#     create: true
 
-- name: Enable nvidia-fabricmanager
-  service:
-    name: nvidia-fabricmanager
-    enabled: yes
+# - name: Dracut
+#   shell: dracut --force
 
-- name: Enable nvidia-persistenced
-  service:
-    name: nvidia-persistenced
-    enabled: yes
+# - name: Enable nvidia-fabricmanager
+#   service:
+#     name: nvidia-fabricmanager
+#     enabled: yes
 
-- name: Install nvidia-container-toolkit 
-  dnf:
-    name: nvidia-container-toolkit
-    state: present
+# - name: Enable nvidia-persistenced
+#   service:
+#     name: nvidia-persistenced
+#     enabled: yes
+
+# - name: Install nvidia-container-toolkit 
+#   dnf:
+#     name: nvidia-container-toolkit
+#     state: present
+
+# # Necessary only for running other containers relying on cuda drivers
+# - name: Install cuda-toolkit 
+#   dnf:
+#     name: cuda-toolkit
+#     state: present
+
+# - name: Install nvidia-gds 
+#   dnf:
+#     name: nvidia-gds
+#     state: present  
