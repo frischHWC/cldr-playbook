@@ -29,6 +29,7 @@ QUERY_PROCESSOR:
     query_processor_database_port: {{ databases.QUERY_PROCESSOR.port }}
     query_processor_database_type: {{ databases.QUERY_PROCESSOR.type | format_database_type }}
     query_processor_database_name: {{ databases.QUERY_PROCESSOR.name }}
+    query_processor_database_schema: {{ databases.QUERY_PROCESSOR.name }}
     query_processor_database_username: {{ databases.QUERY_PROCESSOR.user }}
     query_processor_database_password: {{ databases.QUERY_PROCESSOR.password }}
 SCHEMAREGISTRY:
